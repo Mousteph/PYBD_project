@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from utils import load_weather_data, load_calls_correlation_data, remove_outliers
+from helpers.utils import load_weather_data, load_calls_correlation_data, remove_outliers
 
 import numpy as np
 

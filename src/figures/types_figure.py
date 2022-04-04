@@ -1,4 +1,4 @@
-from utils import load_calls_correlation_data
+from helpers.utils import load_calls_correlation_data
 import plotly.express as px
 
 calls = load_calls_correlation_data()
