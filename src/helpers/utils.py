@@ -14,8 +14,8 @@ def remove_outliers(x, standardize=False):
 
 
 def load_calls_correlation_data():
-    return pd.read_csv("data/NYPD_Calls_data.csv", index_col="INCIDENT_DATE", parse_dates=True)
+    return pd.read_pickle("data/NYPD_calls.pkl")
 
 
 def load_weather_data():
-    return pd.read_csv("data/meteoNY.csv", index_col="date", parse_dates=True)
+    return pd.read_pickle("data/weather.pkl")
