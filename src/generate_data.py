@@ -1,13 +1,32 @@
+"""
+This script allow us to generate the dataset needed for the project.
+All the dataset are in the folder 'data'.
+
+In this folder 'data', you can find:
+	- NYPD_calls_{n}.csv.zip: These files contain all the information about the NYPD calls.
+	https://data.cityofnewyork.us/Public-Safety/NYPD-Calls-for-Service-Historic-/d6zx-ckhd
+
+	- weather.csv.zip: This file contains the data about the weather.
+	https://meteostat.net/fr/place/us/new-york-city?t=2018-01-01/2020-12-31
+
+	- NYPD_calls.pkl: This file contains all the data about the NYPD calls needed for this project.
+
+	- weather.pkl: This file contains all the data about the weather in New-York needed for this project.
+
+This script will create two files 'NYPD_calls.pkl' and 'weather.pkl'.
+"""
+
+
 import pandas as pd
 import glob
 
 
 
-def inside_outside(line: str):
+def inside_outside(line: str) -> str:
     line = line.split("/")[-1]
     inside = ["RESIDENCE", "INSIDE", "DOMESTIC", "COMMERCIAL"]
     outside = ["OUTSIDE", "TRANSIT"]
-    
+
     if any(ext in line for ext in inside):
         return "INSIDE"
     elif any(ext in line for ext in outside):
@@ -46,7 +65,7 @@ def generate_data_weather(file_format: str, save_path: str) -> None:
 	dataset.to_pickle(save_path)
 
 
-def generate_data():
+def generate_data() -> None:
 	generate_data_NYPD_calls("data/NYPD_calls_*.csv.zip", "data/NYPD_calls.pkl")
 	generate_data_weather("data/weather.csv.zip", "data/weather.pkl")
 
