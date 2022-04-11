@@ -1,6 +1,10 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from helpers.utils import load_weather_data, load_calls_correlation_data, remove_outliers
+from helpers.utils import (
+    load_weather_data,
+    load_calls_correlation_data,
+    remove_outliers,
+)
 
 import numpy as np
 
@@ -35,7 +39,9 @@ def display_correlation_plot(freq="W", start=None, end=None):
 
     # Add figure title
     fig.update_layout(
-        title_text=f"Corrélation entre le nombre d'appels et la temperature moyenne {round(corr * 100, 2)}%"
+        title_text=f"Corrélation entre le nombre d'appels et la temperature moyenne {round(corr * 100, 2)}%",
+        margin=dict(l=10, r=10, b=10, t=50, pad=4),
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
     )
 
     # Set x-axis title

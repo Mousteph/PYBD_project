@@ -69,11 +69,11 @@ app.layout = html.Div(
                 ),
             ],
             style={
-                "width": "25%",
+                "width": "100%",
                 "margin-left": "10px",
                 "display": "inline-block",
                 "vertical-align": "top",
-                "height": "100%",
+                "height": "20%",
             },
         ),
         html.Div(
@@ -81,12 +81,10 @@ app.layout = html.Div(
                 dcc.Graph(id="correlation"),
             ],
             style={
-                "width": "70%",
-                "margin-left": "10px",
+                "width": "100%",
                 "display": "inline-block",
                 "vertical-align": "top",
                 "height": "100%",
-                "border-left": "1px solid black",
             },
         ),
         html.Div(
@@ -94,7 +92,7 @@ app.layout = html.Div(
                 dcc.Graph(id="scatter"),
             ],
             style={
-                "width": "40%",
+                "width": "100%",
                 "display": "inline-block",
                 "vertical-align": "bottom",
             },
@@ -104,7 +102,7 @@ app.layout = html.Div(
                 dcc.Graph(id="types"),
             ],
             style={
-                "width": "60%",
+                "width": "70%",
                 "display": "inline-block",
                 "vertical-align": "bottom",
             },
@@ -114,12 +112,13 @@ app.layout = html.Div(
                 dcc.Graph(id="types_in_out"),
             ],
             style={
-                "width": "60%",
+                "width": "40%",
                 "display": "inline-block",
                 "vertical-align": "bottom",
             },
         ),
-    ]
+    ],
+    style={"width": "70%", "padding-left": "15%"},
 )
 
 if __name__ == "__main__":

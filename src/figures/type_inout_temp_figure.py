@@ -36,12 +36,12 @@ def in_out_of_calls(freq="W", start=None, end=None):
 
     fig = px.bar(
         data,
-        y="types",
-        x=0,
+        x="types",
+        y=0,
         labels={"types": "endroit", "0": "date"},
         color="types",
         animation_frame="date",
-        range_x=[0, data[0].max()],
+        range_y=[0, data[0].max()],
     )
     fig.update_layout(showlegend=False)
 

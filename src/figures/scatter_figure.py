@@ -1,4 +1,8 @@
-from helpers.utils import load_calls_correlation_data, load_weather_data, remove_outliers
+from helpers.utils import (
+    load_calls_correlation_data,
+    load_weather_data,
+    remove_outliers,
+)
 import plotly.express as px
 
 calls = load_calls_correlation_data()
@@ -20,5 +24,8 @@ def display_correlation_scatter(freq="W", start=None, end=None):
     fig = px.scatter(x=tavg, y=nb_calls, trendline="ols", size=wspd)
     fig.update_xaxes(title_text="Temperature moyenne")
     fig.update_yaxes(title_text="Nombre d'appels")
+    fig.update_layout(
+        margin=dict(l=10, r=10, b=10, t=50, pad=4),
+    )
 
     return fig
