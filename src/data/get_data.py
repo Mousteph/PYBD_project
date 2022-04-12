@@ -66,8 +66,8 @@ def generate_data_weather(file_format: str, save_path: str) -> None:
 
 
 def generate_data() -> None:
-	generate_data_NYPD_calls("data/NYPD_calls_*.csv.zip", "data/NYPD_calls.pkl")
-	generate_data_weather("data/weather.csv.zip", "data/weather.pkl")
+	generate_data_NYPD_calls("NYPD_calls_*.csv.zip", "NYPD_calls.pkl")
+	generate_data_weather("weather.csv.zip", "weather.pkl")
 
 
 if __name__ == '__main__':
