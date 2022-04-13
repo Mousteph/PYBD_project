@@ -34,3 +34,34 @@ def types_of_calls(freq="W", start=None, end=None):
         margin=dict(l=10, r=10, b=10, t=50, pad=4),
     )
     return fig
+
+
+def types_of_callsbis(freq="M", start=None, end=None, value=None):
+    data = calls.loc[start:end]
+    data["types"] = data.TYP_DESC.apply(lambda x: x.split(":")[0])
+    data["date"] = data.index
+
+    data = (
+        data.groupby(["types", "date"])
+        .size()
+        .reset_index(0)
+        .groupby(["types"])
+        .resample(freq)
+        .sum()
+        .reset_index(0)
+    )
+
+    data = data.loc[value] if value is not None else data
+
+    fig = px.bar(
+        data,
+        x="types",
+        y=0,
+        color="types",
+    )
+
+    fig.update_layout(showlegend=False)
+    fig.update_layout(
+        margin=dict(l=10, r=10, b=10, t=50, pad=4),
+    )
+    return fig

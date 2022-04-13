@@ -7,7 +7,7 @@ from datetime import date
 # from figures import correlation_figure, scatter_figure, types_figure
 from figures.correlation_figure import display_correlation_plot
 from figures.scatter_figure import display_correlation_scatter
-from figures.types_figure import types_of_calls
+from figures.types_figure import types_of_calls, types_of_callsbis
 from figures.type_inout_temp_figure import in_out_of_calls
 
 from helpers.design import background_color, font_color, font_family
@@ -41,14 +41,32 @@ def scatter_figure(freq, start, end):
     return display_correlation_scatter(freq[0], start=start, end=end)
 
 
-# @app.callback(
-#     Output("types", "figure"),
-#     Input("freq", "value"),
-#     Input("date-picker-range", "start_date"),
-#     Input("date-picker-range", "end_date"),
-# )
-# def types_figure(freq, start, end):
-#     return types_of_calls(freq[0], start=start, end=end)
+class Marks:
+    marks = {}
+
+@app.callback(
+    Output("types", "figure"),
+    Input("freq", "value"),
+    Input("date-picker-range", "start_date"),
+    Input("date-picker-range", "end_date"),
+    Input('wps-crossfilter-year-slider', "value"),
+)
+def types_figure(freq, start, end, value):
+    value = Marks.marks.get(value, "2018-01-01")
+    return types_of_callsbis("M", start=start, end=end, value=value)
+
+@app.callback(
+    Output('wps-crossfilter-year-slider', "min"),
+    Output('wps-crossfilter-year-slider', "max"),
+    Output('wps-crossfilter-year-slider', "value"),
+    Output('wps-crossfilter-year-slider', "marks"),
+    Input("freq", "value"),
+)
+def slider_years(freq):
+    years = sorted(weather_data.tavg.resample("M").mean().index)
+    Marks.marks = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
+
+    return 0, len(years) - 1, 0, {i: years[i].strftime("%m") for i in range(len(years))}
 
 
 # @app.callback(
@@ -201,6 +219,31 @@ app.layout = html.Div(
             "font-size": "20px",
             "margin-bottom": "90ppx"
         }),
+
+        html.Div(
+            [
+                html.Div(
+                [
+                    dcc.Graph(id="types"),
+
+                    dcc.Slider(
+                        id='wps-crossfilter-year-slider',
+                        step = 1,
+                    ),
+                ],
+                style={
+                    "width": "70%",
+                    "display": "inline-block",
+                    "vertical-align": "bottom",
+                }),
+            ],
+            style={
+                'justifyContent':'center',
+                'text-align': 'center',
+                "font-size": "20px",
+                "margin-bottom": "90px"
+            }
+        )
 
         
         #html.Div(
