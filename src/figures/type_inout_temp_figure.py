@@ -1,48 +1,33 @@
 from helpers.utils import load_calls_correlation_data
 import plotly.express as px
 
-import re
 
 calls = load_calls_correlation_data()
 
-
-def in_out(line):
-    line = line.split("/")[-1]
-    inside = ["RESIDENCE", "INSIDE", "DOMESTIC", "COMMERCIAL"]
-    outside = ["OUTSIDE", "TRANSIT"]
-    if any(ext in line for ext in inside):
-        return "INSIDE"
-    elif any(ext in line for ext in outside):
-        return "OUTSIDE"
-    return "UNKNOWNED"
-
-
 def in_out_of_calls(freq="W", start=None, end=None):
     data = calls.loc[start:end]
-    data["types"] = data.TYP_DESC.apply(lambda x: in_out(x))
-    print(data["types"].value_counts())
-    data["date"] = data.index
 
     data = (
-        data.groupby(["types", "date"])
+        data.groupby(["place", 'date'])
         .size()
         .reset_index(0)
-        .groupby(["types"])
+        .groupby(["place"])
         .resample(freq)
         .sum()
         .reset_index()
         .astype({"date": str})
+        .rename(columns={0: "number"})
     )
 
     fig = px.bar(
         data,
-        x="types",
-        y=0,
-        labels={"types": "endroit", "0": "date"},
-        color="types",
+        y="place",
+        x="number",
+        color="place",
         animation_frame="date",
-        range_y=[0, data[0].max()],
+        range_x=[0, data["number"].max()],
     )
+
     fig.update_layout(showlegend=False)
 
     return fig
