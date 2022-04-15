@@ -48,6 +48,7 @@ class Marks:
 
 @app.callback(
     Output("types", "figure"),
+    Output("types-in-out", "figure"),
     Input("freq-types", "value"),
     Input("date-picker-range", "start_date"),
     Input("date-picker-range", "end_date"),
@@ -59,7 +60,9 @@ def types_figure(freq, start, end, value):
         value = Marks.vals[freq[0]]
     else:
         value = Marks.marks.get(value, Marks.vals[freq[0]])
-    return types_of_callsbis(freq[0], start=start, end=end, value=value)
+
+    return (types_of_callsbis(freq[0], start=start, end=end, value=value),
+            in_out_of_calls(freq[0], start=start, end=end, value=value))
 
 @app.callback(
     Output('wps-crossfilter-year-slider', "min"),
@@ -276,7 +279,27 @@ app.layout = html.Div(
                         }
                     ),
 
-                    dcc.Graph(id="types"),
+                    html.Div([
+                        html.Div([
+                            dcc.Graph(id="types"),
+                        ], style={
+                            "width": "70%",
+                            "height": "100%",
+                            "display": "inline-block",
+                            "vertical-align": "top",
+                        }),
+
+                        html.Div([
+                            dcc.Graph(id="types-in-out"),
+                        ], style={
+                            "width": "30%",
+                            "height": "100%",
+                            "display": "inline-block",
+                            "vertical-align": "top",
+                        }),
+                        
+                    ]),
+
                     dcc.Interval(
                         id='wps-auto-stepper',
                         interval=1000,       # in milliseconds
@@ -299,7 +322,7 @@ app.layout = html.Div(
                     ], style={'justifyContent': 'start', 'text-align': 'start'}),
                 ],
                 style={
-                    "width": "70%",
+                    "width": "90%",
                     "display": "inline-block",
                     "vertical-align": "bottom",
                 }),
@@ -311,17 +334,6 @@ app.layout = html.Div(
                 "margin-top": "90px"
             }
         )
-
-        #html.Div(
-        #    [
-        #        dcc.Graph(id="types_in_out"),
-        #    ],
-        #    style={
-        #        "width": "40%",
-        #        "display": "inline-block",
-        #        "vertical-align": "bottom",
-        #    },
-        #),
     ],
     style={
         "padding": "4%",
