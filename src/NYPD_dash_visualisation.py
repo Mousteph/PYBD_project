@@ -10,12 +10,40 @@ from figures.types_figure import types_of_callsbis
 from figures.type_inout_temp_figure import in_out_of_calls
 
 from helpers.design import background_color, font_color, font_family
-
 from helpers.utils import load_weather_data
 
-weather_data = load_weather_data()
+
+class SliderDataManager:
+    def __init__(self):
+        yearsM = sorted(load_weather_data().resample("M").mean().index)
+        yearsW = sorted(load_weather_data().resample("W").mean().index)
+        yearsD = sorted(load_weather_data().resample("D").mean().index)
+        self.years = {"M": yearsM, "W": yearsW, "D": yearsD}
+
+        self.range = {}
+        self.dates = {"M": "2018-01-31", "W": "2018-01-07", "D": "2018-01-01"}
+        self.current_freq = "M"
+        self.changed = False
+
+    def get_value(self, value, freq):
+        if self.current_freq != freq[0]:
+            return self.years.get(freq[0])[0]
+            #return self.dates.get(freq[0])
+
+        #return self.range.get(value, self.dates.get(freq[0]))
+        return self.range.get(value, self.years.get(freq[0])[0])
+
+    def get_marks(self, freq):
+        years = self.years[freq[0]]
+        self.range = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
+        self.current_freq = freq[0]
+        self.changed = True
+
+        return len(years) - 1, {i: years[i].strftime("%m") for i in range(len(years))}
+
 
 app = Dash(__name__)
+slider_data = SliderDataManager()
 
 
 @app.callback(
@@ -40,12 +68,6 @@ def scatter_figure(freq, start, end):
     return display_correlation_scatter(freq[0], start=start, end=end)
 
 
-class Marks:
-    marks = {}
-    vals = {"M": "2018-01-31", "W": "2018-01-07", "D": "2018-01-01"}
-    current_freq = "M"
-    changed = False
-
 @app.callback(
     Output("types", "figure"),
     Output("types-in-out", "figure"),
@@ -56,10 +78,7 @@ class Marks:
 )
 def types_figure(freq, start, end, value):
     freq = freq or "Month"
-    if Marks.current_freq != freq[0]:
-        value = Marks.vals[freq[0]]
-    else:
-        value = Marks.marks.get(value, Marks.vals[freq[0]])
+    value = slider_data.get_value(value, freq)
 
     return (types_of_callsbis(freq[0], start=start, end=end, value=value),
             in_out_of_calls(freq[0], start=start, end=end, value=value))
@@ -72,11 +91,7 @@ def types_figure(freq, start, end, value):
 )
 def slider_years(freq):
     freq = freq or "Month"
-    years = sorted(weather_data.tavg.resample(freq[0]).mean().index)
-    Marks.marks = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
-    Marks.current_freq = freq[0]
-    Marks.changed = True
-    return 0, len(years) - 1, {i: years[i].strftime("%m") for i in range(len(years))},
+    return 0, *slider_data.get_marks(freq)
 
 
 @app.callback(
@@ -90,14 +105,12 @@ def update_slider(value, _, freq, disable):
     if disable:
         return value
 
-    if Marks.changed:
-        Marks.changed = False
-        return 0
-    j = len(Marks.marks)
-    if j == 0:
+    if slider_data.changed:
+        slider_data.changed = False
         return 0
 
-    return (value + 1) % j
+    j = len(slider_data.range)
+    return 0 if j == 0 else (value + 1) % j
 
 @app.callback(
     Output('play_pause_button', 'children'),
@@ -110,16 +123,6 @@ def play_pause_button(_, children):
         return "Pause", False
 
     return "Play", True
-
-
-# @app.callback(
-#     Output("types_in_out", "figure"),
-#     Input("freq", "value"),
-#     Input("date-picker-range", "start_date"),
-#     Input("date-picker-range", "end_date"),
-# )
-# def types_in_out_figure(freq, start, end):
-#     return in_out_of_calls(freq[0], start=start, end=end)
 
 
 paraf = """
