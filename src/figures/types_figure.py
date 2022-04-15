@@ -14,10 +14,10 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
     data = DataManager.dataframe.get(freq)
 
     if data is None:
-        data = calls.loc[start:end]
+        #data = calls.loc[start:end]
 
         data = (
-            data.groupby(["desc", 'date'])
+            calls.loc[start:end].groupby(["desc", 'date'])
             .size()
             .reset_index(0)
             .groupby(["desc"])
