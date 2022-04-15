@@ -44,6 +44,7 @@ class Marks:
     marks = {}
     vals = {"M": "2018-01-31", "W": "2018-01-07", "D": "2018-01-01"}
     current_freq = "M"
+    changed = False
 
 @app.callback(
     Output("types", "figure"),
@@ -71,20 +72,25 @@ def slider_years(freq):
     years = sorted(weather_data.tavg.resample(freq[0]).mean().index)
     Marks.marks = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
     Marks.current_freq = freq[0]
-    return 0, len(years) - 1, {i: years[i].strftime("%m") for i in range(len(years))}
+    Marks.changed = True
+    return 0, len(years) - 1, {i: years[i].strftime("%m") for i in range(len(years))},
 
 
-'''@app.callback(
+@app.callback(
     Output('wps-crossfilter-year-slider', "value"),
     Input("wps-crossfilter-year-slider", "value"),
     Input("wps-auto-stepper", "n_intervals"),
+    Input("freq-types", "value"),
 )
-def update_slider(value, _):
+def update_slider(value, _, freq):
+    if Marks.changed:
+        Marks.changed = False
+        return 0
     j = len(Marks.marks)
     if j == 0:
         return 0
 
-    return (value + 1) % j'''
+    return (value + 1) % j
 
 # @app.callback(
 #     Output("types_in_out", "figure"),
@@ -261,12 +267,12 @@ app.layout = html.Div(
                         step = 1,
                     ),
 
-                    #dcc.Interval(
-                    #    id='wps-auto-stepper',
-                    #    interval=1000,       # in milliseconds
-                    #    max_intervals = -1,  # start running
-                    #    n_intervals = 0
-                    #),
+                    dcc.Interval(
+                        id='wps-auto-stepper',
+                        interval=1000,       # in milliseconds
+                        max_intervals = -1,  # start running
+                        n_intervals = 0
+                    ),
                 ],
                 style={
                     "width": "70%",
