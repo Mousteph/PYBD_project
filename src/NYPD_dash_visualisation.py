@@ -86,7 +86,7 @@ def slider_years(freq):
 def update_slider(value, _, freq, disable):
     if disable:
         return value
-        
+
     if Marks.changed:
         Marks.changed = False
         return 0
@@ -277,13 +277,6 @@ app.layout = html.Div(
                     ),
 
                     dcc.Graph(id="types"),
-
-                    dcc.Slider(
-                        id='wps-crossfilter-year-slider',
-                        value=0,
-                        step = 1,
-                    ),
-
                     dcc.Interval(
                         id='wps-auto-stepper',
                         interval=1000,       # in milliseconds
@@ -291,7 +284,19 @@ app.layout = html.Div(
                         n_intervals = 0
                     ),
 
-                    html.Button('Play', id='play_pause_button', n_clicks=0),
+                    html.Div([
+                        dcc.Slider(
+                            id='wps-crossfilter-year-slider',
+                            value=0,
+                            step = 1,
+                        ),
+
+                        html.Button('Play',
+                            id='play_pause_button',
+                            n_clicks=0,
+                            style={'width': '80px', 'height': '60px'}
+                        ),
+                    ], style={'justifyContent': 'start', 'text-align': 'start'}),
                 ],
                 style={
                     "width": "70%",
