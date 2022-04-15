@@ -58,7 +58,6 @@ def types_figure(freq, start, end, value):
 @app.callback(
     Output('wps-crossfilter-year-slider', "min"),
     Output('wps-crossfilter-year-slider', "max"),
-    Output('wps-crossfilter-year-slider', "value"),
     Output('wps-crossfilter-year-slider', "marks"),
     Input("freq", "value"),
 )
@@ -66,8 +65,20 @@ def slider_years(freq):
     years = sorted(weather_data.tavg.resample("M").mean().index)
     Marks.marks = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
 
-    return 0, len(years) - 1, 0, {i: years[i].strftime("%m") for i in range(len(years))}
+    return 0, len(years) - 1, {i: years[i].strftime("%m") for i in range(len(years))}
 
+
+@app.callback(
+    Output('wps-crossfilter-year-slider', "value"),
+    Input("wps-crossfilter-year-slider", "value"),
+    Input("wps-auto-stepper", "n_intervals"),
+)
+def update_slider(value, _):
+    j = len(Marks.marks)
+    if j == 0:
+        return 0
+
+    return (value + 1) % j
 
 # @app.callback(
 #     Output("types_in_out", "figure"),
@@ -228,7 +239,15 @@ app.layout = html.Div(
 
                     dcc.Slider(
                         id='wps-crossfilter-year-slider',
+                        value=0,
                         step = 1,
+                    ),
+                    
+                    dcc.Interval(
+                        id='wps-auto-stepper',
+                        interval=1000,       # in milliseconds
+                        max_intervals = -1,  # start running
+                        n_intervals = 0
                     ),
                 ],
                 style={
