@@ -6,7 +6,7 @@ from datetime import date
 
 from figures.correlation_figure import display_correlation_plot
 from figures.scatter_figure import display_correlation_scatter
-from figures.types_figure import types_of_callsbis
+from figures.types_figure import types_of_calls
 from figures.type_inout_temp_figure import in_out_of_calls
 
 from helpers.design import background_color, font_color, font_family
@@ -21,16 +21,13 @@ class SliderDataManager:
         self.years = {"M": yearsM, "W": yearsW, "D": yearsD}
 
         self.range = {}
-        self.dates = {"M": "2018-01-31", "W": "2018-01-07", "D": "2018-01-01"}
         self.current_freq = "M"
         self.changed = False
 
     def get_value(self, value, freq):
         if self.current_freq != freq[0]:
             return self.years.get(freq[0])[0]
-            #return self.dates.get(freq[0])
 
-        #return self.range.get(value, self.dates.get(freq[0]))
         return self.range.get(value, self.years.get(freq[0])[0])
 
     def get_marks(self, freq):
@@ -80,7 +77,7 @@ def types_figure(freq, start, end, value):
     freq = freq or "Month"
     value = slider_data.get_value(value, freq)
 
-    return (types_of_callsbis(freq[0], start=start, end=end, value=value),
+    return (types_of_calls(freq[0], start=start, end=end, value=value),
             in_out_of_calls(freq[0], start=start, end=end, value=value))
 
 @app.callback(

@@ -5,13 +5,13 @@ from helpers.design import background_color, font_color, font_family
 calls = load_calls_correlation_data()
 
 
-class Data:
+class DataManager:
     dataframe = {}
     max_size = {}
 
 
-def types_of_callsbis(freq="M", start=None, end=None, value=None):
-    data = Data.dataframe.get(freq)
+def types_of_calls(freq="M", start=None, end=None, value=None):
+    data = DataManager.dataframe.get(freq)
 
     if data is None:
         data = calls.loc[start:end]
@@ -27,17 +27,14 @@ def types_of_callsbis(freq="M", start=None, end=None, value=None):
             .rename(columns={0: "number"})
         )
 
-        Data.max_size[freq] = data.number.max()
-        Data.dataframe[freq] = data
+        DataManager.max_size[freq] = data.number.max()
+        DataManager.dataframe[freq] = data
 
-    data = data.loc[value] if value is not None else data
-
-    fig = px.bar(data, x="desc", y="number", color="desc")
-
+    fig = px.bar(data.loc[value], x="desc", y="number", color="desc")
 
     fig.update_layout(
         margin=dict(l=10, r=10, b=10, t=50, pad=4),
-        yaxis_range=[0, Data.max_size[freq]],
+        yaxis_range=[0, DataManager.max_size[freq]],
         showlegend=False,
         plot_bgcolor=background_color,
         paper_bgcolor=background_color,
