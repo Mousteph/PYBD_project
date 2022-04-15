@@ -81,8 +81,12 @@ def slider_years(freq):
     Input("wps-crossfilter-year-slider", "value"),
     Input("wps-auto-stepper", "n_intervals"),
     Input("freq-types", "value"),
+    Input('wps-auto-stepper', 'disabled'),
 )
-def update_slider(value, _, freq):
+def update_slider(value, _, freq, disable):
+    if disable:
+        return value
+        
     if Marks.changed:
         Marks.changed = False
         return 0
@@ -91,6 +95,19 @@ def update_slider(value, _, freq):
         return 0
 
     return (value + 1) % j
+
+@app.callback(
+    Output('play_pause_button', 'children'),
+    Output('wps-auto-stepper', 'disabled'),
+    Input('play_pause_button', 'n_clicks'),
+    Input('play_pause_button', 'children'),
+)
+def play_pause_button(_, children):
+    if children == "Play":
+        return "Pause", False
+
+    return "Play", True
+
 
 # @app.callback(
 #     Output("types_in_out", "figure"),
@@ -273,6 +290,8 @@ app.layout = html.Div(
                         max_intervals = -1,  # start running
                         n_intervals = 0
                     ),
+
+                    html.Button('Play', id='play_pause_button', n_clicks=0),
                 ],
                 style={
                     "width": "70%",
