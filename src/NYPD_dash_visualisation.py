@@ -54,23 +54,22 @@ def figure_correlation(freq, start, end):
 
 
 @app.callback(
-    Output("scatter", "figure"),
-    Input("freq-s", "value"),
-    Input("date-picker-range-s", "start_date"),
-    Input("date-picker-range-s", "end_date"),
+    Output("figure-scatter", "figure"),
+    Input("frequence-scatter", "value"),
+    Input("date-picker-range-scatter", "start_date"),
+    Input("date-picker-range-scatter", "end_date"),
 )
 def scatter_figure(freq, start, end):
-    freq = freq or "Month"
-    return display_correlation_scatter(freq[0], start=start, end=end)
+    return display_correlation_scatter((freq or "Month")[0], start=start, end=end)
 
 
 @app.callback(
-    Output("types", "figure"),
-    Output("types-in-out", "figure"),
-    Input("freq-types", "value"),
-    Input('wps-crossfilter-year-slider', "value"),
+    Output("figure-types", "figure"),
+    Output("figure-types-in-out", "figure"),
+    Input("frequence-types", "value"),
+    Input('slider', "value"),
 )
-def types_figure(freq, value):
+def figure_types(freq, value):
     freq = freq or "Month"
     value = slider_data.get_value(value, freq)
 
@@ -78,10 +77,10 @@ def types_figure(freq, value):
             in_out_of_calls(freq[0], value=value))
 
 @app.callback(
-    Output('wps-crossfilter-year-slider', "min"),
-    Output('wps-crossfilter-year-slider', "max"),
-    Output('wps-crossfilter-year-slider', "marks"),
-    Input("freq-types", "value"),
+    Output('slider', "min"),
+    Output('slider', "max"),
+    Output('slider', "marks"),
+    Input("frequence-types", "value"),
 )
 def slider_years(freq):
     freq = freq or "Month"
@@ -89,13 +88,13 @@ def slider_years(freq):
 
 
 @app.callback(
-    Output('wps-crossfilter-year-slider', "value"),
-    Input("wps-crossfilter-year-slider", "value"),
-    Input("wps-auto-stepper", "n_intervals"),
-    Input("freq-types", "value"),
-    Input('wps-auto-stepper', 'disabled'),
+    Output('slider', "value"),
+    Input("slider", "value"),
+    Input("frequence-types", "value"),
+    Input('stepper', 'disabled'),
+    Input("stepper", "n_intervals"),
 )
-def update_slider(value, _, freq, disable):
+def update_slider(value, freq, disable, _):
     if disable:
         return value
 
@@ -108,7 +107,7 @@ def update_slider(value, _, freq, disable):
 
 @app.callback(
     Output('play_pause_button', 'children'),
-    Output('wps-auto-stepper', 'disabled'),
+    Output('stepper', 'disabled'),
     Input('play_pause_button', 'n_clicks'),
     Input('play_pause_button', 'children'),
 )
@@ -207,7 +206,7 @@ app.layout = html.Div(
         html.Div([
             html.Div(
                 [
-                    dcc.Graph(id="scatter"),
+                    dcc.Graph(id="figure-scatter"),
                 ],
                 style={
                     "width": "75%",
@@ -219,7 +218,7 @@ app.layout = html.Div(
             html.Div(
                 [
                     dcc.DatePickerRange(
-                        id="date-picker-range-s",
+                        id="date-picker-range-scatter",
                         min_date_allowed=date(2018, 1, 1),
                         max_date_allowed=date(2020, 12, 31),
                         start_date=date(2018, 1, 1),
@@ -232,7 +231,7 @@ app.layout = html.Div(
                         }
                     ),
                     dcc.Dropdown(
-                        id="freq-s",
+                        id="frequence-scatter",
                         options=["Day", "Week", "Month"],
                         value="Month",
                         style={
@@ -265,7 +264,7 @@ app.layout = html.Div(
                 html.Div(
                 [
                     dcc.Dropdown(
-                        id="freq-types",
+                        id="frequence-types",
                         options=["Day", "Week", "Month"],
                         value="Month",
                         style={
@@ -278,7 +277,7 @@ app.layout = html.Div(
 
                     html.Div([
                         html.Div([
-                            dcc.Graph(id="types"),
+                            dcc.Graph(id="figure-types"),
                         ], style={
                             "width": "70%",
                             "height": "100%",
@@ -287,7 +286,7 @@ app.layout = html.Div(
                         }),
 
                         html.Div([
-                            dcc.Graph(id="types-in-out"),
+                            dcc.Graph(id="figure-types-in-out"),
                         ], style={
                             "width": "30%",
                             "height": "100%",
@@ -298,7 +297,7 @@ app.layout = html.Div(
                     ]),
 
                     dcc.Interval(
-                        id='wps-auto-stepper',
+                        id='stepper',
                         interval=1000,       # in milliseconds
                         max_intervals = -1,  # start running
                         n_intervals = 0
@@ -306,7 +305,7 @@ app.layout = html.Div(
 
                     html.Div([
                         dcc.Slider(
-                            id='wps-crossfilter-year-slider',
+                            id='slider',
                             value=0,
                             step = 1,
                         ),
