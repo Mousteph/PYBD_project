@@ -44,14 +44,13 @@ slider_data = SliderDataManager()
 
 
 @app.callback(
-    Output("correlation", "figure"),
-    Input("freq", "value"),
-    Input("date-picker-range", "start_date"),
-    Input("date-picker-range", "end_date"),
+    Output("figure-corr", "figure"),
+    Input("frequence-corr", "value"),
+    Input("date-picker-range-corr", "start_date"),
+    Input("date-picker-range-corr", "end_date"),
 )
-def correlation_figure(freq, start, end):
-    freq = freq or "Month"
-    return display_correlation_plot(freq[0], start=start, end=end)
+def figure_correlation(freq, start, end):
+    return display_correlation_plot((freq or "Month")[0], start=start, end=end)
 
 
 @app.callback(
@@ -69,16 +68,14 @@ def scatter_figure(freq, start, end):
     Output("types", "figure"),
     Output("types-in-out", "figure"),
     Input("freq-types", "value"),
-    Input("date-picker-range", "start_date"),
-    Input("date-picker-range", "end_date"),
     Input('wps-crossfilter-year-slider', "value"),
 )
-def types_figure(freq, start, end, value):
+def types_figure(freq, value):
     freq = freq or "Month"
     value = slider_data.get_value(value, freq)
 
-    return (types_of_calls(freq[0], start=start, end=end, value=value),
-            in_out_of_calls(freq[0], start=start, end=end, value=value))
+    return (types_of_calls(freq[0], value=value),
+            in_out_of_calls(freq[0], value=value))
 
 @app.callback(
     Output('wps-crossfilter-year-slider', "min"),
@@ -155,7 +152,7 @@ app.layout = html.Div(
             html.Div(
                 [
                     dcc.DatePickerRange(
-                        id="date-picker-range",
+                        id="date-picker-range-corr",
                         min_date_allowed=date(2018, 1, 1),
                         max_date_allowed=date(2020, 12, 31),
                         start_date=date(2018, 1, 1),
@@ -168,7 +165,7 @@ app.layout = html.Div(
                         }
                     ),
                     dcc.Dropdown(
-                        id="freq",
+                        id="frequence-corr",
                         options=["Day", "Week", "Month"],
                         value="Month",
                         style={
@@ -189,7 +186,7 @@ app.layout = html.Div(
 
             html.Div(
                 [
-                    dcc.Graph(id="correlation"),
+                    dcc.Graph(id="figure-corr"),
                 ],
                 style={
                     "width": "75%",
