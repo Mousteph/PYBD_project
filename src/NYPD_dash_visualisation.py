@@ -4,10 +4,9 @@
 from dash import Dash, dcc, html, Input, Output
 from datetime import date
 
-# from figures import correlation_figure, scatter_figure, types_figure
 from figures.correlation_figure import display_correlation_plot
 from figures.scatter_figure import display_correlation_scatter
-from figures.types_figure import types_of_calls, types_of_callsbis
+from figures.types_figure import types_of_callsbis
 from figures.type_inout_temp_figure import in_out_of_calls
 
 from helpers.design import background_color, font_color, font_family
@@ -43,32 +42,39 @@ def scatter_figure(freq, start, end):
 
 class Marks:
     marks = {}
+    vals = {"M": "2018-01-31", "W": "2018-01-07", "D": "2018-01-01"}
+    current_freq = "M"
 
 @app.callback(
     Output("types", "figure"),
-    Input("freq", "value"),
+    Input("freq-types", "value"),
     Input("date-picker-range", "start_date"),
     Input("date-picker-range", "end_date"),
     Input('wps-crossfilter-year-slider', "value"),
 )
 def types_figure(freq, start, end, value):
-    value = Marks.marks.get(value, "2018-01-01")
-    return types_of_callsbis("M", start=start, end=end, value=value)
+    freq = freq or "Month"
+    if Marks.current_freq != freq[0]:
+        value = Marks.vals[freq[0]]
+    else:
+        value = Marks.marks.get(value, Marks.vals[freq[0]])
+    return types_of_callsbis(freq[0], start=start, end=end, value=value)
 
 @app.callback(
     Output('wps-crossfilter-year-slider', "min"),
     Output('wps-crossfilter-year-slider', "max"),
     Output('wps-crossfilter-year-slider', "marks"),
-    Input("freq", "value"),
+    Input("freq-types", "value"),
 )
 def slider_years(freq):
-    years = sorted(weather_data.tavg.resample("M").mean().index)
+    freq = freq or "Month"
+    years = sorted(weather_data.tavg.resample(freq[0]).mean().index)
     Marks.marks = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
-
+    Marks.current_freq = freq[0]
     return 0, len(years) - 1, {i: years[i].strftime("%m") for i in range(len(years))}
 
 
-@app.callback(
+'''@app.callback(
     Output('wps-crossfilter-year-slider', "value"),
     Input("wps-crossfilter-year-slider", "value"),
     Input("wps-auto-stepper", "n_intervals"),
@@ -78,7 +84,7 @@ def update_slider(value, _):
     if j == 0:
         return 0
 
-    return (value + 1) % j
+    return (value + 1) % j'''
 
 # @app.callback(
 #     Output("types_in_out", "figure"),
@@ -235,6 +241,18 @@ app.layout = html.Div(
             [
                 html.Div(
                 [
+                    dcc.Dropdown(
+                        id="freq-types",
+                        options=["Day", "Week", "Month"],
+                        value="Month",
+                        style={
+                            "background-color": background_color,
+                            "font-color": font_color,
+                            "font-family": font_family,
+                            "width": "100%",
+                        }
+                    ),
+
                     dcc.Graph(id="types"),
 
                     dcc.Slider(
@@ -242,13 +260,13 @@ app.layout = html.Div(
                         value=0,
                         step = 1,
                     ),
-                    
-                    dcc.Interval(
-                        id='wps-auto-stepper',
-                        interval=1000,       # in milliseconds
-                        max_intervals = -1,  # start running
-                        n_intervals = 0
-                    ),
+
+                    #dcc.Interval(
+                    #    id='wps-auto-stepper',
+                    #    interval=1000,       # in milliseconds
+                    #    max_intervals = -1,  # start running
+                    #    n_intervals = 0
+                    #),
                 ],
                 style={
                     "width": "70%",
@@ -260,21 +278,10 @@ app.layout = html.Div(
                 'justifyContent':'center',
                 'text-align': 'center',
                 "font-size": "20px",
-                "margin-bottom": "90px"
+                "margin-top": "90px"
             }
         )
 
-        
-        #html.Div(
-        #    [
-        #        dcc.Graph(id="types"),
-        #    ],
-        #   style={
-        #        "width": "70%",
-        #        "display": "inline-block",
-        #        "vertical-align": "bottom",
-        #    },
-        #),
         #html.Div(
         #    [
         #        dcc.Graph(id="types_in_out"),

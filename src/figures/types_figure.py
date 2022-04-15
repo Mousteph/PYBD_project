@@ -27,20 +27,28 @@ def types_of_calls(freq="W", start=None, end=None):
     )
     return fig
 
+class Data:
+    dataframe = {}
+
 
 def types_of_callsbis(freq="M", start=None, end=None, value=None):
-    data = calls.loc[start:end]
+    data = Data.dataframe.get(freq)
 
-    data = (
-        data.groupby(["desc", 'date'])
-        .size()
-        .reset_index(0)
-        .groupby(["desc"])
-        .resample(freq)
-        .sum()
-        .reset_index(0)
-        .rename(columns={0: "number"})
-    )
+    if data is None:
+        data = calls.loc[start:end]
+
+        data = (
+            data.groupby(["desc", 'date'])
+            .size()
+            .reset_index(0)
+            .groupby(["desc"])
+            .resample(freq)
+            .sum()
+            .reset_index(0)
+            .rename(columns={0: "number"})
+        )
+
+        Data.dataframe[freq] = data
 
     data = data.loc[value] if value is not None else data
 
