@@ -158,6 +158,15 @@ It was popularised in the 1960s with the release of Letraset sheets containing L
 and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 """
 
+paraftype = """
+Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
+and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+"""
+
 app.layout = html.Div(
     [
         html.H1("NYPD Calls en fonction de la météo à New York",
@@ -297,6 +306,8 @@ app.layout = html.Div(
                         }
                     ),
 
+                    html.H3("Type et lieu des appels"),
+
                     html.Div([
                         html.Div([
                             dcc.Graph(id="figure-types"),
@@ -361,6 +372,12 @@ app.layout = html.Div(
                     "display": "inline-block",
                     "vertical-align": "bottom",
                 }),
+
+                html.P(paraf, style={
+                    "text-align": "justify",
+                    "margin-right": "15%",
+                    "margin-left": "15%",
+                    "margin-top": "50px",}),
             ],
             style={
                 'justifyContent':'center',

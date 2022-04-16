@@ -37,11 +37,20 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
 
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])  
-    fig.add_trace(go.Bar(x=data.loc[value].desc, y=data.loc[value].number, marker_color=color_blue), secondary_y=False)
+    fig.add_trace(go.Bar(x=data.loc[value].desc,
+                         y=data.loc[value].number,
+                         marker_color=color_blue,
+                         name="Catégories"), secondary_y=False)
 
-    fig.add_trace(go.Scatter(x=weather_data.index, y=weather_data, line_color=color_green, line_width=0.8), secondary_y=True)
+    fig.add_trace(go.Scatter(x=weather_data.index,
+                             y=weather_data,
+                             line_color=color_green,
+                             line_width=0.8,
+                             name="Température"), secondary_y=True)
+    
     fig.add_vline(x=value, line_color=color_green, line_width=0.8, secondary_y=True)
 
+    
     fig.data[1].update(xaxis='x2')
     fig.layout.shapes[0].xref = 'x2'
 
@@ -51,7 +60,8 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
 
         margin=dict(l=10, r=10, b=10, t=50, pad=4),
         yaxis_range=[0, DataManager.max_size[freq]],
-        showlegend=False,
+        legend=dict(yanchor="top", y=0.94, xanchor="left", x=0.01),
+        #showlegend=False,
         plot_bgcolor=background_color,
         paper_bgcolor=background_color,
         autosize=True,
