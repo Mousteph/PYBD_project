@@ -12,11 +12,8 @@ import numpy as np
 
 calls = load_calls_correlation_data()
 weather = load_weather_data()
-f = {"Mois": "M", "Semaine": "W", "Jour": "D"}
 
-def display_correlation_plot(freq="Mois", start=None, end=None):
-    freq = f.get(freq, "M")
-
+def display_correlation_plot(freq="M", start=None, end=None):
     nb_calls = calls.loc[start:end].resample(freq).size()
     avg = weather.loc[start:end].tavg.resample(freq).mean()
 
