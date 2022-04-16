@@ -29,7 +29,6 @@ def in_out_of_calls(freq="M", start=None, end=None, value=None):
 
 
     fig = px.bar(data.loc[value], x="place", y="number", labels={"place": "lieu", "number": "nombre d'appels"}, color='place')
-    #fig.update_traces(marker_color=color_blue)
 
    
     frequence = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"

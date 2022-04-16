@@ -40,7 +40,6 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
     fig = make_subplots(specs=[[{"secondary_y": True}]])  
     fig.add_trace(go.Bar(x=data.loc[value].desc,
                          y=data.loc[value].number,
-                         #marker_color=color_blue,
                          marker_color=px.colors.qualitative.Plotly,
                          name="Catégories"), secondary_y=False)
 
