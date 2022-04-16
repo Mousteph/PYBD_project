@@ -121,6 +121,13 @@ def update_slider(value, freq, disable, _):
     return 0 if j == 0 else (value + 1) % j
 
 @app.callback(
+    Output('date-slider', 'children'),
+    Input('slider', 'value')
+)
+def display_value(value):
+    return f"Date : {slider_data.range.get(value)}"
+
+@app.callback(
     Output('play_pause_button', 'children'),
     Output('stepper', 'disabled'),
     Input('play_pause_button', 'n_clicks'),
@@ -317,6 +324,8 @@ app.layout = html.Div(
                         max_intervals = -1,  # start running
                         n_intervals = 0
                     ),
+
+                    html.Div(id='date-slider', style={'margin-top': 20, 'text-align': 'start'}),
 
                     html.Div([
                         dcc.Slider(
