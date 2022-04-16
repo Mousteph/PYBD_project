@@ -202,6 +202,7 @@ app.layout = html.Div(
                             "background-color": background_color,
                             "font-color": font_color,
                             "font-family": font_family,
+                            "border-radius": "12px",
                         }
                     ),
                 ],
@@ -227,8 +228,7 @@ app.layout = html.Div(
 
             html.P(paraf, style={"text-align": "justify", "margin-right": "15%", "margin-left": "15%"})
 
-            ],style={
-            'justifyContent':'center',
+            ], style={
             'text-align': 'center',
             "font-size": "20px",
             "margin-bottom": "90px"}
@@ -269,12 +269,13 @@ app.layout = html.Div(
                             "background-color": background_color,
                             "font-color": font_color,
                             "font-family": font_family,
+                            "border-radius": "12px",
                         }
                     ),
                 ],
                 style={
                     "width": "22%",
-                    "margin-right": "30px",
+                    "margin-left": "20px",
                     "display": "inline-block",
                     "vertical-align": "top",
                     "margin-top": "10%" 
@@ -284,7 +285,6 @@ app.layout = html.Div(
             html.P(parafscatter, style={"text-align": "justify", "margin-right": "15%", "margin-left": "15%"})
 
         ], style={
-            'justifyContent':'center',
             'text-align': 'center',
             "font-size": "20px",
             "margin-bottom": "90ppx"
@@ -302,7 +302,7 @@ app.layout = html.Div(
                             "background-color": background_color,
                             "font-color": font_color,
                             "font-family": font_family,
-                            "width": "100%",
+                            "border-radius": "12px",
                         }
                     ),
 
@@ -313,7 +313,6 @@ app.layout = html.Div(
                             dcc.Graph(id="figure-types"),
                         ], style={
                             "width": "70%",
-                            "height": "100%",
                             "display": "inline-block",
                             "vertical-align": "top",
                         }),
@@ -322,7 +321,6 @@ app.layout = html.Div(
                             dcc.Graph(id="figure-types-in-out"),
                         ], style={
                             "width": "30%",
-                            "height": "100%",
                             "display": "inline-block",
                             "vertical-align": "top",
                         }),
@@ -336,7 +334,7 @@ app.layout = html.Div(
                         n_intervals = 0
                     ),
 
-                    html.Div(id='date-slider', style={'margin': "30px", 'text-align': 'start', "font-size": "15px"}),
+                    html.Div(id='date-slider', style={'margin': "20px", 'text-align': 'start', "font-size": "15px"}),
 
                     html.Div([
                         html.Div(
@@ -351,6 +349,7 @@ app.layout = html.Div(
                                     "border": "none",
                                     "color": "white",
                                     "font-size": "15px",
+                                    "font-family": font_family,
                                 }
                             ),
                             style={"display": "inline-block", "width": "10%", "vertical-align": "top"}
@@ -370,7 +369,6 @@ app.layout = html.Div(
                 style={
                     "width": "90%",
                     "display": "inline-block",
-                    "vertical-align": "bottom",
                 }),
 
                 html.P(paraf, style={
@@ -380,7 +378,6 @@ app.layout = html.Div(
                     "margin-top": "50px",}),
             ],
             style={
-                'justifyContent':'center',
                 'text-align': 'center',
                 "font-size": "20px",
                 "margin-top": "90px"
