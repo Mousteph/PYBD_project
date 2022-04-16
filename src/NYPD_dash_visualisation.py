@@ -36,7 +36,22 @@ class SliderDataManager:
         self.current_freq = freq[0]
         self.changed = True
 
-        return len(years) - 1, {i: years[i].strftime("%m") for i in range(len(years))}
+        marks = {i: "" for i in range(len(years))}
+
+        def create_marks(marks, start, end, prof=3):
+            if not prof:
+                return
+
+            mid = (start + end) // 2
+            marks[mid] = years[mid].strftime("%Y-%m-%d")
+            create_marks(marks, start, mid, prof - 1)
+            create_marks(marks, mid, end, prof - 1)
+
+        create_marks(marks, 0, len(years))
+        marks[len(years) - 1] = years[-1].strftime("%Y-%m-%d")
+        marks[0] = years[0].strftime("%Y-%m-%d")
+
+        return len(years) - 1, marks
 
 
 app = Dash(__name__)
