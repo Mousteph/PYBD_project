@@ -1,6 +1,6 @@
 from helpers.utils import load_calls_correlation_data
 import plotly.express as px
-from helpers.design import background_color, font_color, font_family
+from helpers.design import background_color, font_color, font_family, color_blue
 
 
 calls = load_calls_correlation_data()
@@ -26,9 +26,10 @@ def in_out_of_calls(freq="M", start=None, end=None, value=None):
 
         DataManager.max_size[freq] = data.number.max()
         DataManager.dataframe[freq] = data
-        
 
-    fig = px.bar(data.loc[value], x="place", y="number", color="place")
+
+    fig = px.bar(data.loc[value], x="place", y="number")
+    fig.update_traces(marker_color=color_blue)
 
     fig.update_layout(
         showlegend=False,
