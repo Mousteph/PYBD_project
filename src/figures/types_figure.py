@@ -1,21 +1,23 @@
-from helpers.utils import load_calls_correlation_data
-import plotly.express as px
-from helpers.design import background_color, font_color, font_family
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+from helpers.design import background_color, font_color, font_family, color_green, color_blue
+from helpers.utils import load_calls_correlation_data, load_weather_data
 
 calls = load_calls_correlation_data()
+weather = load_weather_data()
 
 
 class DataManager:
     dataframe = {}
     max_size = {}
+    weather_data = {}
 
 
 def types_of_calls(freq="M", start=None, end=None, value=None):
     data = DataManager.dataframe.get(freq)
+    weather_data = DataManager.weather_data.get(freq)
 
     if data is None:
-        #data = calls.loc[start:end]
-
         data = (
             calls.loc[start:end].groupby(["desc", 'date'])
             .size()
@@ -27,12 +29,26 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
             .rename(columns={0: "number"})
         )
 
+        weather_data = weather.tavg.resample(freq).mean()
+
         DataManager.max_size[freq] = data.number.max()
         DataManager.dataframe[freq] = data
+        DataManager.weather_data[freq] = weather_data
 
-    fig = px.bar(data.loc[value], x="desc", y="number", color="desc")
+
+    fig = make_subplots(specs=[[{"secondary_y": True}]])  
+    fig.add_trace(go.Bar(x=data.loc[value].desc, y=data.loc[value].number, marker_color=color_blue), secondary_y=False)
+
+    fig.add_trace(go.Scatter(x=weather_data.index, y=weather_data, line_color=color_green, line_width=0.8), secondary_y=True)
+    fig.add_vline(x=value, line_color=color_green, line_width=0.8, secondary_y=True)
+
+    fig.data[1].update(xaxis='x2')
+    fig.layout.shapes[0].xref = 'x2'
 
     fig.update_layout(
+        xaxis2={'anchor': 'y', 'overlaying': 'x', 'side': 'top'},
+        yaxis_domain=[0, 0.94],
+
         margin=dict(l=10, r=10, b=10, t=50, pad=4),
         yaxis_range=[0, DataManager.max_size[freq]],
         showlegend=False,
