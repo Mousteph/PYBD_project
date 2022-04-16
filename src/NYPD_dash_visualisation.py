@@ -9,7 +9,7 @@ from figures.scatter_figure import display_correlation_scatter
 from figures.types_figure import types_of_calls
 from figures.type_inout_temp_figure import in_out_of_calls
 
-from helpers.design import background_color, font_color, font_family
+from helpers.design import background_color, font_color, font_family, color_green
 from helpers.utils import load_weather_data
 
 
@@ -325,21 +325,36 @@ app.layout = html.Div(
                         n_intervals = 0
                     ),
 
-                    html.Div(id='date-slider', style={'margin-top': 20, 'text-align': 'start'}),
+                    html.Div(id='date-slider', style={'margin': "30px", 'text-align': 'start', "font-size": "15px"}),
 
                     html.Div([
-                        dcc.Slider(
-                            id='slider',
-                            value=0,
-                            step = 1,
+                        html.Div(
+                            html.Button('Play',
+                                id='play_pause_button',
+                                n_clicks=0,
+                                style={
+                                    'width': '55px',
+                                    'height': '35px',
+                                    "background-color": color_green,
+                                    "border-radius": "12px",
+                                    "border": "none",
+                                    "color": "white",
+                                    "font-size": "15px",
+                                }
+                            ),
+                            style={"display": "inline-block", "width": "10%", "vertical-align": "top"}
                         ),
 
-                        html.Button('Play',
-                            id='play_pause_button',
-                            n_clicks=0,
-                            style={'width': '80px', 'height': '60px'}
+                        html.Div(
+                            dcc.Slider(
+                                id='slider',
+                                value=0,
+                                step = 1,
+                            ),
+                            style={"display": "inline-block", "width": "85%", "vertical-align": "top"}
                         ),
-                    ], style={'justifyContent': 'start', 'text-align': 'start'}),
+                        
+                    ],),
                 ],
                 style={
                     "width": "90%",
