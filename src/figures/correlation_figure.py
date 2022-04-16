@@ -8,10 +8,11 @@ from helpers.utils import (
 
 from helpers.design import background_color, font_color, font_family, color_blue, color_green
 
-import numpy as np
+# import numpy as np
 
 calls = load_calls_correlation_data()
 weather = load_weather_data()
+
 
 def display_correlation_plot(freq="M", start=None, end=None):
     nb_calls = calls.loc[start:end].resample(freq).size()
@@ -19,7 +20,7 @@ def display_correlation_plot(freq="M", start=None, end=None):
 
     nb_calls = remove_outliers(nb_calls)
     avg = remove_outliers(avg)
-    #corr = np.corrcoef(nb_calls, avg)[0][1]
+    # corr = np.corrcoef(nb_calls, avg)[0][1]
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -36,8 +37,8 @@ def display_correlation_plot(freq="M", start=None, end=None):
 
     # Add figure title
     fig.update_layout(
-        #title_text=f"Corrélation entre le nombre d'appels et la temperature moyenne {round(corr * 100, 2)}%",
-        #title_x=0.5,
+        # title_text=f"Corrélation entre le nombre d'appels et la temperature moyenne {round(corr * 100, 2)}%",
+        # title_x=0.5,
         margin=dict(l=10, r=10, b=10, t=50, pad=2),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
         plot_bgcolor=background_color,
@@ -50,10 +51,10 @@ def display_correlation_plot(freq="M", start=None, end=None):
     # Set x-axis title
     fig.update_xaxes(title_text="Date")
 
-    frequence = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
+    frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
 
     # Set y-axes titles
-    fig.update_yaxes(title_text=f"Nombre d'appels par {frequence}", secondary_y=False)
-    fig.update_yaxes(title_text=f"Température moyenne par {frequence}", secondary_y=True)
+    fig.update_yaxes(title_text=f"Nombre d'appels par {frequency}", secondary_y=False)
+    fig.update_yaxes(title_text=f"Température moyenne par {frequency}", secondary_y=True)
 
     return fig

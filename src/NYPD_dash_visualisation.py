@@ -38,14 +38,14 @@ class SliderDataManager:
 
         marks = {i: "" for i in range(len(years))}
 
-        def create_marks(marks, start, end, prof=3):
+        def create_marks(mark, start, end, prof=3):
             if not prof:
                 return
 
             mid = (start + end) // 2
-            marks[mid] = years[mid].strftime("%Y-%m-%d")
-            create_marks(marks, start, mid, prof - 1)
-            create_marks(marks, mid, end, prof - 1)
+            mark[mid] = years[mid].strftime("%Y-%m-%d")
+            create_marks(mark, start, mid, prof - 1)
+            create_marks(mark, mid, end, prof - 1)
 
         create_marks(marks, 0, len(years))
         marks[len(years) - 1] = years[-1].strftime("%Y-%m-%d")
@@ -57,7 +57,7 @@ class SliderDataManager:
 app = Dash(__name__)
 slider_data = SliderDataManager()
 
-frequence = {"Mois": "M", "Semaine": "W", "Jour": "D"}
+frequency = {"Mois": "M", "Semaine": "W", "Jour": "D"}
 
 
 @app.callback(
@@ -67,7 +67,7 @@ frequence = {"Mois": "M", "Semaine": "W", "Jour": "D"}
     Input("date-picker-range-corr", "end_date"),
 )
 def figure_correlation(freq, start, end):
-    return display_correlation_plot(frequence.get(freq, "M"), start=start, end=end)
+    return display_correlation_plot(frequency.get(freq, "M"), start=start, end=end)
 
 
 @app.callback(
@@ -77,7 +77,7 @@ def figure_correlation(freq, start, end):
     Input("date-picker-range-scatter", "end_date"),
 )
 def scatter_figure(freq, start, end):
-    return display_correlation_scatter(frequence.get(freq, "M"), start=start, end=end)
+    return display_correlation_scatter(frequency.get(freq, "M"), start=start, end=end)
 
 
 @app.callback(
@@ -87,11 +87,12 @@ def scatter_figure(freq, start, end):
     Input('slider', "value"),
 )
 def figure_types(freq, value):
-    freq = frequence.get(freq, "M")
+    freq = frequency.get(freq, "M")
     value = slider_data.get_value(value, freq)
 
     return (types_of_calls(freq, value=value),
             in_out_of_calls(freq, value=value))
+
 
 @app.callback(
     Output('slider', "min"),
@@ -100,7 +101,7 @@ def figure_types(freq, value):
     Input("frequence-types", "value"),
 )
 def slider_years(freq):
-    return 0, *slider_data.get_marks(frequence.get(freq, "M"))
+    return 0, *slider_data.get_marks(frequency.get(freq, "M"))
 
 
 @app.callback(
@@ -120,12 +121,14 @@ def update_slider(value, disable, _):
     j = len(slider_data.range)
     return 0 if j == 0 else (value + 1) % j
 
+
 @app.callback(
     Output('date-slider', 'children'),
     Input('slider', 'value')
 )
 def display_value(value):
     return f"Date : {slider_data.range.get(value)}"
+
 
 @app.callback(
     Output('play_pause_button', 'children'),
@@ -170,23 +173,23 @@ and more recently with desktop publishing software like Aldus PageMaker includin
 app.layout = html.Div(
     [
         html.H1("NYPD Calls en fonction de la météo à New York",
-            style={
-                "text-align": "center",
-                "margin-bottom": "80px",
-                "font-size": "50px",
-                'font-family': font_family,
-                'font-color': font_color,
-            }),
+                style={
+                    "text-align": "center",
+                    "margin-bottom": "80px",
+                    "font-size": "50px",
+                    'font-family': font_family,
+                    'font-color': font_color,
+                }),
 
         html.Div([
             html.H2("Nombre d'appels et température moyenne",
-                style={
-                    "text-align": "start",
-                    "margin-bottom": "30px",
-                    "font-family": font_family,
-                    "font-color": font_color,
-                }
-            ),
+                    style={
+                        "text-align": "start",
+                        "margin-bottom": "30px",
+                        "font-family": font_family,
+                        "font-color": font_color,
+                    }
+                    ),
 
             html.Div(
                 [
@@ -238,9 +241,10 @@ app.layout = html.Div(
                 },
             ),
 
-            html.P(paraf, style={"text-align": "justify", "margin-right": "15%", "margin-left": "15%", "margin-top": "20px"})
+            html.P(paraf,
+                   style={"text-align": "justify", "margin-right": "15%", "margin-left": "15%", "margin-top": "20px"})
 
-            ], style={
+        ], style={
             'text-align': 'center',
             "font-size": "20px",
             "margin-bottom": "90px"}
@@ -248,13 +252,13 @@ app.layout = html.Div(
 
         html.Div([
             html.H2("Nombre d'appels en fonction de la température moyenne",
-                style={
-                    "text-align": "start",
-                    "margin-bottom": "30px",
-                    "font-family": font_family,
-                    "font-color": font_color,
-                }
-            ),
+                    style={
+                        "text-align": "start",
+                        "margin-bottom": "30px",
+                        "font-family": font_family,
+                        "font-color": font_color,
+                    }
+                    ),
 
             html.Div(
                 [
@@ -302,12 +306,12 @@ app.layout = html.Div(
                     "margin-left": "20px",
                     "display": "inline-block",
                     "vertical-align": "top",
-                    "margin-top": "10%" 
+                    "margin-top": "10%"
                 },
             ),
 
             html.P(parafscatter, style={"text-align": "justify", "margin-right": "15%",
-                "margin-left": "15%", "margin-top": "20px"})
+                                        "margin-left": "15%", "margin-top": "20px"})
 
         ], style={
             'text-align': 'center',
@@ -318,97 +322,98 @@ app.layout = html.Div(
         html.Div(
             [
                 html.H2("Type et lieu des appels par rapport à la température moyenne",
-                    style={
-                        "text-align": "start",
-                        "margin-bottom": "30px",
-                        "font-family": font_family,
-                        "font-color": font_color,
-                    }
-                ),
+                        style={
+                            "text-align": "start",
+                            "margin-bottom": "30px",
+                            "font-family": font_family,
+                            "font-color": font_color,
+                        }
+                        ),
 
                 html.Div(
-                [
-                    dcc.Dropdown(
-                        id="frequence-types",
-                        options=["Jour", "Semaine", "Mois"],
-                        value="Mois",
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                            "border-radius": "12px",
-                            "margin-bottom": "20px",
-                        }
-                    ),
-
-                    html.Div([
-                        html.Div([
-                            dcc.Graph(id="figure-types"),
-                        ], style={
-                            "width": "70%",
-                            "display": "inline-block",
-                            "vertical-align": "top",
-                        }),
-
-                        html.Div([
-                            dcc.Graph(id="figure-types-in-out"),
-                        ], style={
-                            "width": "30%",
-                            "display": "inline-block",
-                            "vertical-align": "top",
-                        }),
-                        
-                    ], style={"border": f"2px solid lightgrey", "padding": "5px", "border-radius": "12px",}),
-
-                    dcc.Interval(
-                        id='stepper',
-                        interval=1000,       # in milliseconds
-                        max_intervals = -1,  # start running
-                        n_intervals = 0
-                    ),
-
-                    html.Div(id='date-slider', style={'margin': "20px", 'text-align': 'start', "font-size": "15px"}),
-
-                    html.Div([
-                        html.Div(
-                            html.Button('Start',
-                                id='play_pause_button',
-                                n_clicks=0,
-                                style={
-                                    'width': '55px',
-                                    'height': '35px',
-                                    "background-color": color_green,
-                                    "border-radius": "12px",
-                                    "border": "none",
-                                    "color": "white",
-                                    "font-size": "15px",
-                                    "font-family": font_family,
-                                }
-                            ),
-                            style={"display": "inline-block", "width": "10%", "vertical-align": "top"}
+                    [
+                        dcc.Dropdown(
+                            id="frequence-types",
+                            options=["Jour", "Semaine", "Mois"],
+                            value="Mois",
+                            style={
+                                "background-color": background_color,
+                                "font-color": font_color,
+                                "font-family": font_family,
+                                "border-radius": "12px",
+                                "margin-bottom": "20px",
+                            }
                         ),
 
-                        html.Div(
-                            dcc.Slider(
-                                id='slider',
-                                value=0,
-                                step = 1,
-                            ),
-                            style={"display": "inline-block", "width": "85%", "vertical-align": "top"}
+                        html.Div([
+                            html.Div([
+                                dcc.Graph(id="figure-types"),
+                            ], style={
+                                "width": "70%",
+                                "display": "inline-block",
+                                "vertical-align": "top",
+                            }),
+
+                            html.Div([
+                                dcc.Graph(id="figure-types-in-out"),
+                            ], style={
+                                "width": "30%",
+                                "display": "inline-block",
+                                "vertical-align": "top",
+                            }),
+
+                        ], style={"border": f"2px solid lightgrey", "padding": "5px", "border-radius": "12px", }),
+
+                        dcc.Interval(
+                            id='stepper',
+                            interval=1000,  # in milliseconds
+                            max_intervals=-1,  # start running
+                            n_intervals=0
                         ),
-                        
-                    ],),
-                ],
-                style={
-                    "width": "90%",
-                    "display": "inline-block",
-                }),
+
+                        html.Div(id='date-slider',
+                                 style={'margin': "20px", 'text-align': 'start', "font-size": "15px"}),
+
+                        html.Div([
+                            html.Div(
+                                html.Button('Start',
+                                            id='play_pause_button',
+                                            n_clicks=0,
+                                            style={
+                                                'width': '55px',
+                                                'height': '35px',
+                                                "background-color": color_green,
+                                                "border-radius": "12px",
+                                                "border": "none",
+                                                "color": "white",
+                                                "font-size": "15px",
+                                                "font-family": font_family,
+                                            }
+                                            ),
+                                style={"display": "inline-block", "width": "10%", "vertical-align": "top"}
+                            ),
+
+                            html.Div(
+                                dcc.Slider(
+                                    id='slider',
+                                    value=0,
+                                    step=1,
+                                ),
+                                style={"display": "inline-block", "width": "85%", "vertical-align": "top"}
+                            ),
+
+                        ], ),
+                    ],
+                    style={
+                        "width": "90%",
+                        "display": "inline-block",
+                    }),
 
                 html.P(paraf, style={
                     "text-align": "justify",
                     "margin-right": "15%",
                     "margin-left": "15%",
-                    "margin-top": "50px",}),
+                    "margin-top": "50px", }),
             ],
             style={
                 'text-align': 'center',
@@ -422,9 +427,8 @@ app.layout = html.Div(
         "background-color": background_color,
         "font-color": font_color,
         "font-family": font_family
-        },
+    },
 )
-
 
 if __name__ == "__main__":
     app.run_server(debug=True)

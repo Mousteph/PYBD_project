@@ -21,13 +21,13 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
     if data is None:
         data = (
             calls.loc[start:end].groupby(["desc", 'date'])
-            .size()
-            .reset_index(0)
-            .groupby(["desc"])
-            .resample(freq)
-            .sum()
-            .reset_index(0)
-            .rename(columns={0: "number"})
+                .size()
+                .reset_index(0)
+                .groupby(["desc"])
+                .resample(freq)
+                .sum()
+                .reset_index(0)
+                .rename(columns={0: "number"})
         )
 
         weather_data = weather.tavg.resample(freq).mean()
@@ -36,8 +36,7 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
         DataManager.dataframe[freq] = data
         DataManager.weather_data[freq] = weather_data
 
-
-    fig = make_subplots(specs=[[{"secondary_y": True}]])  
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Bar(x=data.loc[value].desc,
                          y=data.loc[value].number,
                          marker_color=px.colors.qualitative.Plotly,
@@ -48,21 +47,20 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
                              line_color=color_green,
                              line_width=0.8,
                              name="Température"), secondary_y=True)
-    
+
     fig.add_vline(x=value, line_color=color_green, line_width=0.8, secondary_y=True)
 
-    
     fig.data[1].update(xaxis='x2')
     fig.layout.shapes[0].xref = 'x2'
 
     # Set x-axis title
     fig.update_xaxes(title_text="Catégories")
 
-    frequence = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
+    frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
 
     # Set y-axes titles
-    fig.update_yaxes(title_text=f"Nombre d'appels par {frequence}", secondary_y=False)
-    fig.update_yaxes(title_text=f"Température moyenne par {frequence}", secondary_y=True)
+    fig.update_yaxes(title_text=f"Nombre d'appels par {frequency}", secondary_y=False)
+    fig.update_yaxes(title_text=f"Température moyenne par {frequency}", secondary_y=True)
 
     fig.update_layout(
         xaxis2={'anchor': 'y', 'overlaying': 'x', 'side': 'top'},

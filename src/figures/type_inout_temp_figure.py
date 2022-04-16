@@ -2,12 +2,13 @@ from helpers.utils import load_calls_correlation_data
 import plotly.express as px
 from helpers.design import background_color, font_color, font_family, color_blue
 
-
 calls = load_calls_correlation_data()
+
 
 class DataManager:
     dataframe = {}
     max_size = {}
+
 
 def in_out_of_calls(freq="M", start=None, end=None, value=None):
     data = DataManager.dataframe.get(freq)
@@ -15,25 +16,24 @@ def in_out_of_calls(freq="M", start=None, end=None, value=None):
     if data is None:
         data = (
             calls.loc[start:end].groupby(["place", 'date'])
-            .size()
-            .reset_index(0)
-            .groupby(["place"])
-            .resample(freq)
-            .sum()
-            .reset_index(0)
-            .rename(columns={0: "number"})
+                .size()
+                .reset_index(0)
+                .groupby(["place"])
+                .resample(freq)
+                .sum()
+                .reset_index(0)
+                .rename(columns={0: "number"})
         )
 
         DataManager.max_size[freq] = data.number.max()
         DataManager.dataframe[freq] = data
 
+    fig = px.bar(data.loc[value], x="place", y="number", labels={"place": "lieu", "number": "nombre d'appels"},
+                 color='place')
 
-    fig = px.bar(data.loc[value], x="place", y="number", labels={"place": "lieu", "number": "nombre d'appels"}, color='place')
+    frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
 
-   
-    frequence = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
-
-    fig.update_yaxes(title_text=f"Nombre d'appels par {frequence}")
+    fig.update_yaxes(title_text=f"Nombre d'appels par {frequency}")
     fig.update_xaxes(title_text="Lieu")
 
     fig.update_layout(
@@ -45,6 +45,6 @@ def in_out_of_calls(freq="M", start=None, end=None, value=None):
         autosize=True,
         font_family=font_family,
         font_color=font_color,
-        )
+    )
 
     return fig
