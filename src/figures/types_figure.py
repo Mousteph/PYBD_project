@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+import plotly.express as px
 from plotly.subplots import make_subplots
 from helpers.design import background_color, font_color, font_family, color_green, color_blue
 from helpers.utils import load_calls_correlation_data, load_weather_data
@@ -39,7 +40,8 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
     fig = make_subplots(specs=[[{"secondary_y": True}]])  
     fig.add_trace(go.Bar(x=data.loc[value].desc,
                          y=data.loc[value].number,
-                         marker_color=color_blue,
+                         #marker_color=color_blue,
+                         marker_color=px.colors.qualitative.Plotly,
                          name="Catégories"), secondary_y=False)
 
     fig.add_trace(go.Scatter(x=weather_data.index,
@@ -54,6 +56,15 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
     fig.data[1].update(xaxis='x2')
     fig.layout.shapes[0].xref = 'x2'
 
+    # Set x-axis title
+    fig.update_xaxes(title_text="Catégories")
+
+    frequence = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
+
+    # Set y-axes titles
+    fig.update_yaxes(title_text=f"Nombre d'appels par {frequence}", secondary_y=False)
+    fig.update_yaxes(title_text=f"Température moyenne par {frequence}", secondary_y=True)
+
     fig.update_layout(
         xaxis2={'anchor': 'y', 'overlaying': 'x', 'side': 'top'},
         yaxis_domain=[0, 0.94],
@@ -61,7 +72,6 @@ def types_of_calls(freq="M", start=None, end=None, value=None):
         margin=dict(l=10, r=10, b=10, t=50, pad=4),
         yaxis_range=[0, DataManager.max_size[freq]],
         legend=dict(yanchor="top", y=0.94, xanchor="left", x=0.01),
-        #showlegend=False,
         plot_bgcolor=background_color,
         paper_bgcolor=background_color,
         autosize=True,

@@ -25,15 +25,15 @@ class SliderDataManager:
         self.changed = False
 
     def get_value(self, value, freq):
-        if self.current_freq != freq[0]:
-            return self.years.get(freq[0])[0]
+        if self.current_freq != freq:
+            return self.years.get(freq)[0]
 
-        return self.range.get(value, self.years.get(freq[0])[0])
+        return self.range.get(value, self.years.get(freq)[0])
 
     def get_marks(self, freq):
-        years = self.years[freq[0]]
+        years = self.years[freq]
         self.range = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
-        self.current_freq = freq[0]
+        self.current_freq = freq
         self.changed = True
 
         marks = {i: "" for i in range(len(years))}
@@ -87,11 +87,11 @@ def scatter_figure(freq, start, end):
     Input('slider', "value"),
 )
 def figure_types(freq, value):
-    freq = freq or "Month"
+    freq = frequence.get(freq, "M")
     value = slider_data.get_value(value, freq)
 
-    return (types_of_calls(freq[0], value=value),
-            in_out_of_calls(freq[0], value=value))
+    return (types_of_calls(freq, value=value),
+            in_out_of_calls(freq, value=value))
 
 @app.callback(
     Output('slider', "min"),
@@ -100,18 +100,16 @@ def figure_types(freq, value):
     Input("frequence-types", "value"),
 )
 def slider_years(freq):
-    freq = freq or "Month"
-    return 0, *slider_data.get_marks(freq)
+    return 0, *slider_data.get_marks(frequence.get(freq, "M"))
 
 
 @app.callback(
     Output('slider', "value"),
     Input("slider", "value"),
-    Input("frequence-types", "value"),
     Input('stepper', 'disabled'),
     Input("stepper", "n_intervals"),
 )
-def update_slider(value, freq, disable, _):
+def update_slider(value, disable, _):
     if disable:
         return value
 
@@ -136,10 +134,10 @@ def display_value(value):
     Input('play_pause_button', 'children'),
 )
 def play_pause_button(_, children):
-    if children == "Play":
-        return "Pause", False
+    if children == "Start":
+        return "Stop", False
 
-    return "Play", True
+    return "Start", True
 
 
 paraf = """
@@ -319,21 +317,29 @@ app.layout = html.Div(
 
         html.Div(
             [
+                html.H2("Type et lieu des appels par rapport à la température moyenne",
+                    style={
+                        "text-align": "start",
+                        "margin-bottom": "30px",
+                        "font-family": font_family,
+                        "font-color": font_color,
+                    }
+                ),
+
                 html.Div(
                 [
                     dcc.Dropdown(
                         id="frequence-types",
-                        options=["Day", "Week", "Month"],
-                        value="Month",
+                        options=["Jour", "Semaine", "Mois"],
+                        value="Mois",
                         style={
                             "background-color": background_color,
                             "font-color": font_color,
                             "font-family": font_family,
                             "border-radius": "12px",
+                            "margin-bottom": "20px",
                         }
                     ),
-
-                    html.H3("Type et lieu des appels"),
 
                     html.Div([
                         html.Div([
@@ -352,7 +358,7 @@ app.layout = html.Div(
                             "vertical-align": "top",
                         }),
                         
-                    ]),
+                    ], style={"border": f"2px solid lightgrey", "padding": "5px", "border-radius": "12px",}),
 
                     dcc.Interval(
                         id='stepper',
@@ -365,7 +371,7 @@ app.layout = html.Div(
 
                     html.Div([
                         html.Div(
-                            html.Button('Play',
+                            html.Button('Start',
                                 id='play_pause_button',
                                 n_clicks=0,
                                 style={

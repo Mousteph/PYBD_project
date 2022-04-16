@@ -28,8 +28,14 @@ def in_out_of_calls(freq="M", start=None, end=None, value=None):
         DataManager.dataframe[freq] = data
 
 
-    fig = px.bar(data.loc[value], x="place", y="number")
-    fig.update_traces(marker_color=color_blue)
+    fig = px.bar(data.loc[value], x="place", y="number", labels={"place": "lieu", "number": "nombre d'appels"}, color='place')
+    #fig.update_traces(marker_color=color_blue)
+
+   
+    frequence = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
+
+    fig.update_yaxes(title_text=f"Nombre d'appels par {frequence}")
+    fig.update_xaxes(title_text="Lieu")
 
     fig.update_layout(
         showlegend=False,
