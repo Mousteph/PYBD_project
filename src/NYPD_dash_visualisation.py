@@ -65,7 +65,7 @@ slider_data = SliderDataManager()
     Input("date-picker-range-corr", "end_date"),
 )
 def figure_correlation(freq, start, end):
-    return display_correlation_plot((freq or "Month")[0], start=start, end=end)
+    return display_correlation_plot(freq or "Mois", start=start, end=end)
 
 
 @app.callback(
@@ -179,6 +179,14 @@ app.layout = html.Div(
             }),
 
         html.Div([
+            html.H2("Nombre d'appels et température moyenne",
+                style={
+                    "text-align": "start",
+                    "margin-bottom": "30px",
+                    "font-family": font_family,
+                    "font-color": font_color,
+                }),
+
             html.Div(
                 [
                     dcc.DatePickerRange(
@@ -196,8 +204,8 @@ app.layout = html.Div(
                     ),
                     dcc.Dropdown(
                         id="frequence-corr",
-                        options=["Day", "Week", "Month"],
-                        value="Month",
+                        options=["Jour", "Semaine", "Mois"],
+                        value="Mois",
                         style={
                             "background-color": background_color,
                             "font-color": font_color,
@@ -211,7 +219,7 @@ app.layout = html.Div(
                     "margin-right": "20px",
                     "display": "inline-block",
                     "vertical-align": "top",
-                    "margin-top": "10%" 
+                    "margin-top": "10%",
                 },
             ),
 
@@ -223,6 +231,9 @@ app.layout = html.Div(
                     "width": "75%",
                     "display": "inline-block",
                     "vertical-align": "top",
+                    "border": f"1px solid",
+                    "padding": "5px",
+                    "border-radius": "12px",
                 },
             ),
 

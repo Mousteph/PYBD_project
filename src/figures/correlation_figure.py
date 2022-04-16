@@ -12,38 +12,36 @@ import numpy as np
 
 calls = load_calls_correlation_data()
 weather = load_weather_data()
+f = {"Mois": "M", "Semaine": "W", "Jour": "D"}
 
+def display_correlation_plot(freq="Mois", start=None, end=None):
+    freq = f.get(freq, "M")
 
-def display_correlation_plot(freq="W", start=None, end=None):
-    calls_date = calls.loc[start:end]
-    weather_data = weather.loc[start:end]
-
-    nb_calls = calls_date.resample(freq).size()
-    avg = weather_data.tavg.resample(freq).mean()
+    nb_calls = calls.loc[start:end].resample(freq).size()
+    avg = weather.loc[start:end].tavg.resample(freq).mean()
 
     nb_calls = remove_outliers(nb_calls)
     avg = remove_outliers(avg)
-
-    corr = np.corrcoef(nb_calls, avg)[0][1]
+    #corr = np.corrcoef(nb_calls, avg)[0][1]
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
     # Add traces
     fig.add_trace(
-        go.Scatter(x=nb_calls.index, y=nb_calls, name="Appels", line_color=color_blue),
+        go.Scatter(x=nb_calls.index, y=nb_calls, line_color=color_blue, name="Appels"),
         secondary_y=False,
     )
 
     fig.add_trace(
-        go.Scatter(x=nb_calls.index, y=avg, name="Temperature", line_color=color_green),
+        go.Scatter(x=nb_calls.index, y=avg, line_color=color_green, name="Température"),
         secondary_y=True,
     )
 
     # Add figure title
     fig.update_layout(
-        title_text=f"Corrélation entre le nombre d'appels et la temperature moyenne {round(corr * 100, 2)}%",
-        title_x=0.5,
-        margin=dict(l=10, r=10, b=10, t=50, pad=4),
+        #title_text=f"Corrélation entre le nombre d'appels et la temperature moyenne {round(corr * 100, 2)}%",
+        #title_x=0.5,
+        margin=dict(l=10, r=10, b=10, t=50, pad=2),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
         plot_bgcolor=background_color,
         paper_bgcolor=background_color,
@@ -55,8 +53,10 @@ def display_correlation_plot(freq="W", start=None, end=None):
     # Set x-axis title
     fig.update_xaxes(title_text="Date")
 
+    frequence = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
+
     # Set y-axes titles
-    fig.update_yaxes(title_text="Nombre d'appels", secondary_y=False)
-    fig.update_yaxes(title_text="Temperature moyenne", secondary_y=True)
+    fig.update_yaxes(title_text=f"Nombre d'appels par {frequence}", secondary_y=False)
+    fig.update_yaxes(title_text=f"Température moyenne par {frequence}", secondary_y=True)
 
     return fig
