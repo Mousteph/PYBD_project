@@ -164,113 +164,48 @@ and more recently with desktop publishing software like Aldus PageMaker includin
 """
 
 app.layout = html.Div(
-    [
-        html.H1(
-            "NYPD Calls en fonction de la météo à New York",
-            style={
-                "text-align": "center",
-                "margin-bottom": "80px",
-                "font-size": "50px",
-                "font-family": font_family,
-                "font-color": font_color,
-            },
+    className="app-base",
+    children=[
+        html.H1("NYPD Calls en fonction de la météo à New York"),
+        html.Div(
+            className="app-Dropdown-div",
+            children=[
+                dcc.Dropdown(
+                    id="frequence",
+                    options=["Jour", "Semaine", "Mois"],
+                    value="Mois",
+                    searchable=False,
+                    clearable=False,
+                    persistence=True,
+                    className="app-Dropdown",
+                ),
+            ]
         ),
         html.Div(
-            [
-                html.H2(
-                    "Nombre d'appels et température moyenne",
-                    style={
-                        "text-align": "start",
-                        "margin-bottom": "30px",
-                        "font-family": font_family,
-                        "font-color": font_color,
-                    },
-                ),
-                html.Div(
-                    [
-                        dcc.Graph(
-                            id="figure-corr",
-                            style={
-                                "width": "80%",
-                                "display": "inline-block",
-                                "border": f"2px solid lightgrey",
-                                "border-radius": "12px",
-                            }
-                        )
-                    ]
-                ),
-                html.P(
-                    paraf,
-                    style={
-                        "text-align": "justify",
-                        "width": "80%",
-                        "margin": 'auto',
-                        "margin-top": "20px",
-                    },
-                ),
-            ],
-            style={
-                "text-align": "center",
-                "font-size": "20px",
-                "margin-bottom": "90px",
-            },
+            className="graph-div",
+            children=[
+                html.H2(children="Nombre d'appels et température moyenne"),
+                html.Div([dcc.Graph(className="graph", id="figure-corr")]),
+                html.P(className="graph-text", children=paraf)
+            ]
         ),
         html.Div(
-            [
-                html.H2(
-                    "Nombre d'appels en fonction de la température moyenne",
-                    style={
-                        "text-align": "start",
-                        "margin-bottom": "30px",
-                        "font-family": font_family,
-                        "font-color": font_color,
-                    },
-                ),
-                html.Div(
-                    [
-                        dcc.Graph(
-                            id="figure-scatter",
-                            style={
-                                "width": "80%",
-                                "display": "inline-block",
-                                "vertical-align": "top",
-                                "border": f"2px solid lightgrey",
-                                "padding": "5px",
-                                "border-radius": "12px",
-                            }
-                        )
-                    ]
-
-                ),
-                html.P(
-                    parafscatter,
-                    style={
-                        "text-align": "justify",
-                        "width": "80%",
-                        "margin": 'auto',
-                        "margin-top": "20px",
-                    },
-                ),
-            ],
-            style={
-                "text-align": "center",
-                "font-size": "20px",
-                "margin-bottom": "90ppx",
-            },
+            className="graph-div",
+            children=[
+                html.H2("Nombre d'appels en fonction de la température moyenne"),
+                html.Div([dcc.Graph(className="graph", id="figure-scatter")]),
+                html.P(className="graph-text", children=parafscatter),
+            ]
         ),
         html.Div(
-            [
+            className="graph-div",
+            children=[
                 html.H2(
-                    "Type et lieu des appels par rapport à la température moyenne",
-                    style={
-                        "text-align": "start",
-                        "margin-bottom": "30px",
-                        "font-family": font_family,
-                        "font-color": font_color,
-                    },
+                    "Type et lieu des appels par rapport à la température moyenne"
                 ),
                 html.Div(
-                    [
+                    className="graph-types",
+                    children=[
                         html.Div(
                             [
                                 html.Div(
@@ -352,63 +287,15 @@ app.layout = html.Div(
                                 ),
                             ],
                         ),
-                    ],
-                    style={
-                        "width": "90%",
-                        "display": "inline-block",
-                    },
+                    ]
                 ),
                 html.P(
-                    paraf,
-                    style={
-                        "text-align": "justify",
-                        "margin-right": "15%",
-                        "margin-left": "15%",
-                        "margin-top": "50px",
-                    },
+                    className="graph-text",
+                    children=paraf
                 ),
-            ],
-            style={"text-align": "center",
-                   "font-size": "20px", "margin-top": "90px"},
+            ]
         ),
-        html.Div(
-            [
-                dcc.Dropdown(
-                    id="frequence",
-                    options=["Jour", "Semaine", "Mois"],
-                    value="Mois",
-                    searchable=False,
-                    clearable=False,
-                    style={
-                        "background-color": background_color,
-                        "font-color": font_color,
-                        "font-family": font_family,
-                        "border-radius": "12px",
-                        "width": "100%",
-                        "padding": '2px',
-                    },
-                    persistence=True,
-                ),
-            ],
-            style={
-                "position": "-webkit-sticky",
-                "position": "sticky",
-                "bottom": 0,
-                'background-color': 'red',
-                'height': '80px',
-                "z-index": 1000,
-            },
-        ),
-    ],
-    style={
-        "width": '80%',
-        "max-width": '1300px',
-        "height": "100%",
-        "margin": "auto",
-        "background-color": background_color,
-        "font-color": font_color,
-        "font-family": font_family,
-    },
+    ]
 )
 
 if __name__ == "__main__":
