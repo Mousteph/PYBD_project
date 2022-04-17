@@ -6,7 +6,13 @@ from helpers.utils import (
     remove_outliers,
 )
 
-from helpers.design import background_color, font_color, font_family, color_blue, color_green
+from helpers.design import (
+    background_color,
+    font_color,
+    font_family,
+    color_blue,
+    color_green,
+)
 
 # import numpy as np
 
@@ -55,6 +61,8 @@ def display_correlation_plot(freq="M", start=None, end=None):
 
     # Set y-axes titles
     fig.update_yaxes(title_text=f"Nombre d'appels par {frequency}", secondary_y=False)
-    fig.update_yaxes(title_text=f"Température moyenne par {frequency}", secondary_y=True)
+    fig.update_yaxes(
+        title_text=f"Température moyenne par {frequency}", secondary_y=True
+    )
 
     return fig

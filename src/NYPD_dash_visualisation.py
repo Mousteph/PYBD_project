@@ -32,7 +32,8 @@ class SliderDataManager:
 
     def get_marks(self, freq):
         years = self.years[freq]
-        self.range = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
+        self.range = {i: years[i].strftime("%Y-%m-%d")
+                      for i in range(len(years))}
         self.current_freq = freq
         self.changed = True
 
@@ -62,52 +63,47 @@ frequency = {"Mois": "M", "Semaine": "W", "Jour": "D"}
 
 @app.callback(
     Output("figure-corr", "figure"),
-    Input("frequence-corr", "value"),
-    Input("date-picker-range-corr", "start_date"),
-    Input("date-picker-range-corr", "end_date"),
+    Input("frequence", "value"),
 )
-def figure_correlation(freq, start, end):
-    return display_correlation_plot(frequency.get(freq, "M"), start=start, end=end)
+def figure_correlation(freq):
+    return display_correlation_plot(frequency.get(freq, "M"))
 
 
-@app.callback(
+@ app.callback(
     Output("figure-scatter", "figure"),
-    Input("frequence-scatter", "value"),
-    Input("date-picker-range-scatter", "start_date"),
-    Input("date-picker-range-scatter", "end_date"),
+    Input("frequence", "value"),
 )
-def scatter_figure(freq, start, end):
-    return display_correlation_scatter(frequency.get(freq, "M"), start=start, end=end)
+def scatter_figure(freq):
+    return display_correlation_scatter(frequency.get(freq, "M"))
 
 
-@app.callback(
+@ app.callback(
     Output("figure-types", "figure"),
     Output("figure-types-in-out", "figure"),
-    Input("frequence-types", "value"),
-    Input('slider', "value"),
+    Input("frequence", "value"),
+    Input("slider", "value"),
 )
 def figure_types(freq, value):
     freq = frequency.get(freq, "M")
     value = slider_data.get_value(value, freq)
 
-    return (types_of_calls(freq, value=value),
-            in_out_of_calls(freq, value=value))
+    return (types_of_calls(freq, value=value), in_out_of_calls(freq, value=value))
 
 
-@app.callback(
-    Output('slider', "min"),
-    Output('slider', "max"),
-    Output('slider', "marks"),
-    Input("frequence-types", "value"),
+@ app.callback(
+    Output("slider", "min"),
+    Output("slider", "max"),
+    Output("slider", "marks"),
+    Input("frequence", "value"),
 )
 def slider_years(freq):
     return 0, *slider_data.get_marks(frequency.get(freq, "M"))
 
 
-@app.callback(
-    Output('slider', "value"),
+@ app.callback(
+    Output("slider", "value"),
     Input("slider", "value"),
-    Input('stepper', 'disabled'),
+    Input("stepper", "disabled"),
     Input("stepper", "n_intervals"),
 )
 def update_slider(value, disable, _):
@@ -122,19 +118,16 @@ def update_slider(value, disable, _):
     return 0 if j == 0 else (value + 1) % j
 
 
-@app.callback(
-    Output('date-slider', 'children'),
-    Input('slider', 'value')
-)
+@ app.callback(Output("date-slider", "children"), Input("slider", "value"))
 def display_value(value):
     return f"Date : {slider_data.range.get(value)}"
 
 
-@app.callback(
-    Output('play_pause_button', 'children'),
-    Output('stepper', 'disabled'),
-    Input('play_pause_button', 'n_clicks'),
-    Input('play_pause_button', 'children'),
+@ app.callback(
+    Output("play_pause_button", "children"),
+    Output("stepper", "disabled"),
+    Input("play_pause_button", "n_clicks"),
+    Input("play_pause_button", "children"),
 )
 def play_pause_button(_, children):
     if children == "Start":
@@ -172,261 +165,249 @@ and more recently with desktop publishing software like Aldus PageMaker includin
 
 app.layout = html.Div(
     [
-        html.H1("NYPD Calls en fonction de la météo à New York",
-                style={
-                    "text-align": "center",
-                    "margin-bottom": "80px",
-                    "font-size": "50px",
-                    'font-family': font_family,
-                    'font-color': font_color,
-                }),
-
-        html.Div([
-            html.H2("Nombre d'appels et température moyenne",
-                    style={
-                        "text-align": "start",
-                        "margin-bottom": "30px",
-                        "font-family": font_family,
-                        "font-color": font_color,
-                    }
-                    ),
-
-            html.Div(
-                [
-                    dcc.DatePickerRange(
-                        id="date-picker-range-corr",
-                        min_date_allowed=date(2018, 1, 1),
-                        max_date_allowed=date(2020, 12, 31),
-                        start_date=date(2018, 1, 1),
-                        end_date=date(2020, 12, 31),
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                            "margin-bottom": "5%",
-                        }
-                    ),
-                    dcc.Dropdown(
-                        id="frequence-corr",
-                        options=["Jour", "Semaine", "Mois"],
-                        value="Mois",
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                            "border-radius": "12px",
-                        }
-                    ),
-                ],
-                style={
-                    "width": "22%",
-                    "margin-right": "20px",
-                    "display": "inline-block",
-                    "vertical-align": "top",
-                    "margin-top": "10%",
-                },
-            ),
-
-            html.Div(
-                [
-                    dcc.Graph(id="figure-corr"),
-                ],
-                style={
-                    "width": "75%",
-                    "display": "inline-block",
-                    "vertical-align": "top",
-                    "border": f"2px solid lightgrey",
-                    "padding": "5px",
-                    "border-radius": "12px",
-                },
-            ),
-
-            html.P(paraf,
-                   style={"text-align": "justify", "margin-right": "15%", "margin-left": "15%", "margin-top": "20px"})
-
-        ], style={
-            'text-align': 'center',
-            "font-size": "20px",
-            "margin-bottom": "90px"}
+        html.H1(
+            "NYPD Calls en fonction de la météo à New York",
+            style={
+                "text-align": "center",
+                "margin-bottom": "80px",
+                "font-size": "50px",
+                "font-family": font_family,
+                "font-color": font_color,
+            },
         ),
-
-        html.Div([
-            html.H2("Nombre d'appels en fonction de la température moyenne",
-                    style={
-                        "text-align": "start",
-                        "margin-bottom": "30px",
-                        "font-family": font_family,
-                        "font-color": font_color,
-                    }
-                    ),
-
-            html.Div(
-                [
-                    dcc.Graph(id="figure-scatter"),
-                ],
-                style={
-                    "width": "75%",
-                    "display": "inline-block",
-                    "vertical-align": "top",
-                    "border": f"2px solid lightgrey",
-                    "padding": "5px",
-                    "border-radius": "12px",
-                },
-            ),
-
-            html.Div(
-                [
-                    dcc.DatePickerRange(
-                        id="date-picker-range-scatter",
-                        min_date_allowed=date(2018, 1, 1),
-                        max_date_allowed=date(2020, 12, 31),
-                        start_date=date(2018, 1, 1),
-                        end_date=date(2020, 12, 31),
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                            "margin-bottom": "5%",
-                        }
-                    ),
-                    dcc.Dropdown(
-                        id="frequence-scatter",
-                        options=["Jour", "Semaine", "Mois"],
-                        value="Mois",
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                            "border-radius": "12px",
-                        }
-                    ),
-                ],
-                style={
-                    "width": "22%",
-                    "margin-left": "20px",
-                    "display": "inline-block",
-                    "vertical-align": "top",
-                    "margin-top": "10%"
-                },
-            ),
-
-            html.P(parafscatter, style={"text-align": "justify", "margin-right": "15%",
-                                        "margin-left": "15%", "margin-top": "20px"})
-
-        ], style={
-            'text-align': 'center',
-            "font-size": "20px",
-            "margin-bottom": "90ppx"
-        }),
-
         html.Div(
             [
-                html.H2("Type et lieu des appels par rapport à la température moyenne",
-                        style={
-                            "text-align": "start",
-                            "margin-bottom": "30px",
-                            "font-family": font_family,
-                            "font-color": font_color,
-                        }
-                        ),
-
+                html.H2(
+                    "Nombre d'appels et température moyenne",
+                    style={
+                        "text-align": "start",
+                        "margin-bottom": "30px",
+                        "font-family": font_family,
+                        "font-color": font_color,
+                    },
+                ),
                 html.Div(
                     [
-                        dcc.Dropdown(
-                            id="frequence-types",
-                            options=["Jour", "Semaine", "Mois"],
-                            value="Mois",
+                        dcc.Graph(
+                            id="figure-corr",
                             style={
-                                "background-color": background_color,
-                                "font-color": font_color,
-                                "font-family": font_family,
+                                "width": "80%",
+                                "display": "inline-block",
+                                "border": f"2px solid lightgrey",
                                 "border-radius": "12px",
-                                "margin-bottom": "20px",
                             }
+                        )
+                    ]
+                ),
+                html.P(
+                    paraf,
+                    style={
+                        "text-align": "justify",
+                        "width": "80%",
+                        "margin": 'auto',
+                        "margin-top": "20px",
+                    },
+                ),
+            ],
+            style={
+                "text-align": "center",
+                "font-size": "20px",
+                "margin-bottom": "90px",
+            },
+        ),
+        html.Div(
+            [
+                html.H2(
+                    "Nombre d'appels en fonction de la température moyenne",
+                    style={
+                        "text-align": "start",
+                        "margin-bottom": "30px",
+                        "font-family": font_family,
+                        "font-color": font_color,
+                    },
+                ),
+                html.Div(
+                    [
+                        dcc.Graph(
+                            id="figure-scatter",
+                            style={
+                                "width": "80%",
+                                "display": "inline-block",
+                                "vertical-align": "top",
+                                "border": f"2px solid lightgrey",
+                                "padding": "5px",
+                                "border-radius": "12px",
+                            }
+                        )
+                    ]
+
+                ),
+                html.P(
+                    parafscatter,
+                    style={
+                        "text-align": "justify",
+                        "width": "80%",
+                        "margin": 'auto',
+                        "margin-top": "20px",
+                    },
+                ),
+            ],
+            style={
+                "text-align": "center",
+                "font-size": "20px",
+                "margin-bottom": "90ppx",
+            },
+        ),
+        html.Div(
+            [
+                html.H2(
+                    "Type et lieu des appels par rapport à la température moyenne",
+                    style={
+                        "text-align": "start",
+                        "margin-bottom": "30px",
+                        "font-family": font_family,
+                        "font-color": font_color,
+                    },
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+                                html.Div(
+                                    [
+                                        dcc.Graph(id="figure-types"),
+                                    ],
+                                    style={
+                                        "width": "70%",
+                                        "display": "inline-block",
+                                        "vertical-align": "top",
+                                    },
+                                ),
+                                html.Div(
+                                    [
+                                        dcc.Graph(id="figure-types-in-out"),
+                                    ],
+                                    style={
+                                        "width": "30%",
+                                        "display": "inline-block",
+                                        "vertical-align": "top",
+                                    },
+                                ),
+                            ],
+                            style={
+                                "border": f"2px solid lightgrey",
+                                "padding": "5px",
+                                "border-radius": "12px",
+                            },
                         ),
-
-                        html.Div([
-                            html.Div([
-                                dcc.Graph(id="figure-types"),
-                            ], style={
-                                "width": "70%",
-                                "display": "inline-block",
-                                "vertical-align": "top",
-                            }),
-
-                            html.Div([
-                                dcc.Graph(id="figure-types-in-out"),
-                            ], style={
-                                "width": "30%",
-                                "display": "inline-block",
-                                "vertical-align": "top",
-                            }),
-
-                        ], style={"border": f"2px solid lightgrey", "padding": "5px", "border-radius": "12px", }),
-
                         dcc.Interval(
-                            id='stepper',
+                            id="stepper",
                             interval=1000,  # in milliseconds
                             max_intervals=-1,  # start running
-                            n_intervals=0
+                            n_intervals=0,
                         ),
-
-                        html.Div(id='date-slider',
-                                 style={'margin': "20px", 'text-align': 'start', "font-size": "15px"}),
-
-                        html.Div([
-                            html.Div(
-                                html.Button('Start',
-                                            id='play_pause_button',
-                                            n_clicks=0,
-                                            style={
-                                                'width': '55px',
-                                                'height': '35px',
-                                                "background-color": color_green,
-                                                "border-radius": "12px",
-                                                "border": "none",
-                                                "color": "white",
-                                                "font-size": "15px",
-                                                "font-family": font_family,
-                                            }
-                                            ),
-                                style={"display": "inline-block", "width": "10%", "vertical-align": "top"}
-                            ),
-
-                            html.Div(
-                                dcc.Slider(
-                                    id='slider',
-                                    value=0,
-                                    step=1,
+                        html.Div(
+                            id="date-slider",
+                            style={
+                                "margin": "20px",
+                                "text-align": "start",
+                                "font-size": "15px",
+                            },
+                        ),
+                        html.Div(
+                            [
+                                html.Div(
+                                    html.Button(
+                                        "Start",
+                                        id="play_pause_button",
+                                        n_clicks=0,
+                                        style={
+                                            "width": "55px",
+                                            "height": "35px",
+                                            "background-color": color_green,
+                                            "border-radius": "12px",
+                                            "border": "none",
+                                            "color": "white",
+                                            "font-size": "15px",
+                                            "font-family": font_family,
+                                        },
+                                    ),
+                                    style={
+                                        "display": "inline-block",
+                                        "width": "10%",
+                                        "vertical-align": "top",
+                                    },
                                 ),
-                                style={"display": "inline-block", "width": "85%", "vertical-align": "top"}
-                            ),
-
-                        ], ),
+                                html.Div(
+                                    dcc.Slider(
+                                        id="slider",
+                                        value=0,
+                                        step=1,
+                                    ),
+                                    style={
+                                        "display": "inline-block",
+                                        "width": "85%",
+                                        "vertical-align": "top",
+                                    },
+                                ),
+                            ],
+                        ),
                     ],
                     style={
                         "width": "90%",
                         "display": "inline-block",
-                    }),
-
-                html.P(paraf, style={
-                    "text-align": "justify",
-                    "margin-right": "15%",
-                    "margin-left": "15%",
-                    "margin-top": "50px", }),
+                    },
+                ),
+                html.P(
+                    paraf,
+                    style={
+                        "text-align": "justify",
+                        "margin-right": "15%",
+                        "margin-left": "15%",
+                        "margin-top": "50px",
+                    },
+                ),
+            ],
+            style={"text-align": "center",
+                   "font-size": "20px", "margin-top": "90px"},
+        ),
+        html.Div(
+            [
+                dcc.Dropdown(
+                    id="frequence",
+                    options=["Jour", "Semaine", "Mois"],
+                    value="Mois",
+                    searchable=False,
+                    clearable=False,
+                    style={
+                        "background-color": background_color,
+                        "font-color": font_color,
+                        "font-family": font_family,
+                        "border-radius": "12px",
+                        "width": "100%",
+                        "padding": '2px',
+                    },
+                    persistence=True,
+                ),
             ],
             style={
-                'text-align': 'center',
-                "font-size": "20px",
-                "margin-top": "90px"
-            }
-        )
+                "position": "-webkit-sticky",
+                "position": "sticky",
+                "bottom": 0,
+                'background-color': 'red',
+                'height': '80px',
+                "z-index": 1000,
+            },
+        ),
     ],
     style={
-        "padding": "4%",
+        "width": '80%',
+        "max-width": '1300px',
+        "height": "100%",
+        "margin": "auto",
         "background-color": background_color,
         "font-color": font_color,
-        "font-family": font_family
+        "font-family": font_family,
     },
 )
 
