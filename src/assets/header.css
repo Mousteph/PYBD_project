@@ -29,7 +29,7 @@ h2 {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    background-color: red;
+    background-color: #FFFFFF;
     width: 80%;
     margin: auto;
     height: 80px;
@@ -42,4 +42,3 @@ h2 {
     padding: 2px;
     z-index: 1000;
 }
-
