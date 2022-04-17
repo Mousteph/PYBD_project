@@ -9,6 +9,7 @@
     display: inline-block;
     border: 2px solid lightgrey;
     border-radius: 12px;
+    padding: 3px;
 }
 
 .graph-types {
