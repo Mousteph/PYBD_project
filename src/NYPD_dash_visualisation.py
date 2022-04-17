@@ -198,42 +198,27 @@ app.layout = html.Div(
             ]
         ),
         html.Div(
-            className="graph-div",
-            children=[
+            [
                 html.H2(
                     "Type et lieu des appels par rapport à la température moyenne"
                 ),
                 html.Div(
-                    className="graph-types",
+                    className="graph-div-types",
                     children=[
                         html.Div(
-                            [
+                            className="graph-types",
+                            children=[
                                 html.Div(
-                                    [
-                                        dcc.Graph(id="figure-types"),
-                                    ],
-                                    style={
-                                        "width": "70%",
-                                        "display": "inline-block",
-                                        "vertical-align": "top",
-                                    },
+                                    className="graph-types-general",
+                                    children=[dcc.Graph(id="figure-types")],
                                 ),
                                 html.Div(
-                                    [
-                                        dcc.Graph(id="figure-types-in-out"),
-                                    ],
-                                    style={
-                                        "width": "30%",
-                                        "display": "inline-block",
-                                        "vertical-align": "top",
-                                    },
+                                    className="graph-types-in-out",
+                                    children=[
+                                        dcc.Graph(id="figure-types-in-out")
+                                    ]
                                 ),
-                            ],
-                            style={
-                                "border": f"2px solid lightgrey",
-                                "padding": "5px",
-                                "border-radius": "12px",
-                            },
+                            ]
                         ),
                         dcc.Interval(
                             id="stepper",
@@ -253,19 +238,9 @@ app.layout = html.Div(
                             [
                                 html.Div(
                                     html.Button(
-                                        "Start",
+                                        children="Start",
                                         id="play_pause_button",
-                                        n_clicks=0,
-                                        style={
-                                            "width": "55px",
-                                            "height": "35px",
-                                            "background-color": color_green,
-                                            "border-radius": "12px",
-                                            "border": "none",
-                                            "color": "white",
-                                            "font-size": "15px",
-                                            "font-family": font_family,
-                                        },
+                                        n_clicks=0
                                     ),
                                     style={
                                         "display": "inline-block",
@@ -274,27 +249,20 @@ app.layout = html.Div(
                                     },
                                 ),
                                 html.Div(
-                                    dcc.Slider(
+                                    className="graph-types-slider",
+                                    children=dcc.Slider(
                                         id="slider",
                                         value=0,
                                         step=1,
                                     ),
-                                    style={
-                                        "display": "inline-block",
-                                        "width": "85%",
-                                        "vertical-align": "top",
-                                    },
                                 ),
                             ],
                         ),
+                        html.P(className="graph-text", children=paraf)
                     ]
                 ),
-                html.P(
-                    className="graph-text",
-                    children=paraf
-                ),
             ]
-        ),
+        )
     ]
 )
 
