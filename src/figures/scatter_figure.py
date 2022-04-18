@@ -12,7 +12,7 @@ calls = load_calls_correlation_data()
 weather = load_weather_data()
 
 
-def display_correlation_scatter(freq="W", start=None, end=None):
+def display_correlation_scatter(freq="M", start=None, end=None):
     calls_date = calls.loc[start:end]
     weather_data = weather.loc[start:end]
 
@@ -25,14 +25,17 @@ def display_correlation_scatter(freq="W", start=None, end=None):
     wspd = remove_outliers(wspd)
 
     fig = px.scatter(x=tavg, y=nb_calls, trendline="ols", size=wspd,
-        color_discrete_sequence=[color_blue], trendline_color_override=color_green)
+                     color_discrete_sequence=[color_blue], trendline_color_override=color_green,
+                     labels={"x": "température", "y": "nombre d'appels", "size": "précipitation"})
 
-    fig.update_xaxes(title_text="Temperature moyenne")
-    fig.update_yaxes(title_text="Nombre d'appels")
-    
+    frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
+
+    fig.update_xaxes(title_text=f"Température moyenne par {frequency}")
+    fig.update_yaxes(title_text=f"Nombre d'appels par {frequency}")
+
     fig.update_layout(
-        title_text=f"Nombre d'appels en fonction de la température moyenne",
-        title_x=0.5,
+        # title_text=f"Nombre d'appels en fonction de la température moyenne",
+        # title_x=0.5,
         margin=dict(l=10, r=10, b=10, t=50, pad=4),
         plot_bgcolor=background_color,
         paper_bgcolor=background_color,

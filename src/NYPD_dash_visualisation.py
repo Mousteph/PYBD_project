@@ -4,79 +4,136 @@
 from dash import Dash, dcc, html, Input, Output
 from datetime import date
 
-# from figures import correlation_figure, scatter_figure, types_figure
 from figures.correlation_figure import display_correlation_plot
 from figures.scatter_figure import display_correlation_scatter
-from figures.types_figure import types_of_calls, types_of_callsbis
+from figures.types_figure import types_of_calls
 from figures.type_inout_temp_figure import in_out_of_calls
 
-from helpers.design import background_color, font_color, font_family
-
+from helpers.design import background_color, font_color, font_family, color_green
 from helpers.utils import load_weather_data
 
-weather_data = load_weather_data()
+
+class SliderDataManager:
+    def __init__(self):
+        yearsM = sorted(load_weather_data().resample("M").mean().index)
+        yearsW = sorted(load_weather_data().resample("W").mean().index)
+        yearsD = sorted(load_weather_data().resample("D").mean().index)
+        self.years = {"M": yearsM, "W": yearsW, "D": yearsD}
+
+        self.range = {}
+        self.current_freq = "M"
+        self.changed = False
+
+    def get_value(self, value, freq):
+        if self.current_freq != freq:
+            return self.years.get(freq)[0]
+
+        return self.range.get(value, self.years.get(freq)[0])
+
+    def get_marks(self, freq):
+        years = self.years[freq]
+        self.range = {i: years[i].strftime("%Y-%m-%d")
+                      for i in range(len(years))}
+        self.current_freq = freq
+        self.changed = True
+
+        marks = {i: "" for i in range(len(years))}
+
+        def create_marks(mark, start, end, prof=3):
+            if not prof:
+                return
+
+            mid = (start + end) // 2
+            mark[mid] = years[mid].strftime("%Y-%m-%d")
+            create_marks(mark, start, mid, prof - 1)
+            create_marks(mark, mid, end, prof - 1)
+
+        create_marks(marks, 0, len(years))
+        marks[len(years) - 1] = years[-1].strftime("%Y-%m-%d")
+        marks[0] = years[0].strftime("%Y-%m-%d")
+
+        return len(years) - 1, marks
+
 
 app = Dash(__name__)
+slider_data = SliderDataManager()
+
+frequency = {"Mois": "M", "Semaine": "W", "Jour": "D"}
 
 
 @app.callback(
-    Output("correlation", "figure"),
-    Input("freq", "value"),
-    Input("date-picker-range", "start_date"),
-    Input("date-picker-range", "end_date"),
+    Output("figure-corr", "figure"),
+    Input("frequence", "value"),
 )
-def correlation_figure(freq, start, end):
-    freq = freq or "Month"
-    return display_correlation_plot(freq[0], start=start, end=end)
+def figure_correlation(freq):
+    return display_correlation_plot(frequency.get(freq, "M"))
 
 
-@app.callback(
-    Output("scatter", "figure"),
-    Input("freq-s", "value"),
-    Input("date-picker-range-s", "start_date"),
-    Input("date-picker-range-s", "end_date"),
+@ app.callback(
+    Output("figure-scatter", "figure"),
+    Input("frequence", "value"),
 )
-def scatter_figure(freq, start, end):
-    freq = freq or "Month"
-    return display_correlation_scatter(freq[0], start=start, end=end)
+def scatter_figure(freq):
+    return display_correlation_scatter(frequency.get(freq, "M"))
 
 
-class Marks:
-    marks = {}
-
-@app.callback(
-    Output("types", "figure"),
-    Input("freq", "value"),
-    Input("date-picker-range", "start_date"),
-    Input("date-picker-range", "end_date"),
-    Input('wps-crossfilter-year-slider', "value"),
+@ app.callback(
+    Output("figure-types", "figure"),
+    Output("figure-types-in-out", "figure"),
+    Input("frequence", "value"),
+    Input("slider", "value"),
 )
-def types_figure(freq, start, end, value):
-    value = Marks.marks.get(value, "2018-01-01")
-    return types_of_callsbis("M", start=start, end=end, value=value)
+def figure_types(freq, value):
+    freq = frequency.get(freq, "M")
+    value = slider_data.get_value(value, freq)
 
-@app.callback(
-    Output('wps-crossfilter-year-slider', "min"),
-    Output('wps-crossfilter-year-slider', "max"),
-    Output('wps-crossfilter-year-slider', "value"),
-    Output('wps-crossfilter-year-slider', "marks"),
-    Input("freq", "value"),
+    return (types_of_calls(freq, value=value), in_out_of_calls(freq, value=value))
+
+
+@ app.callback(
+    Output("slider", "min"),
+    Output("slider", "max"),
+    Output("slider", "marks"),
+    Input("frequence", "value"),
 )
 def slider_years(freq):
-    years = sorted(weather_data.tavg.resample("M").mean().index)
-    Marks.marks = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
-
-    return 0, len(years) - 1, 0, {i: years[i].strftime("%m") for i in range(len(years))}
+    return 0, *slider_data.get_marks(frequency.get(freq, "M"))
 
 
-# @app.callback(
-#     Output("types_in_out", "figure"),
-#     Input("freq", "value"),
-#     Input("date-picker-range", "start_date"),
-#     Input("date-picker-range", "end_date"),
-# )
-# def types_in_out_figure(freq, start, end):
-#     return in_out_of_calls(freq[0], start=start, end=end)
+@ app.callback(
+    Output("slider", "value"),
+    Input("slider", "value"),
+    Input("stepper", "disabled"),
+    Input("stepper", "n_intervals"),
+)
+def update_slider(value, disable, _):
+    if disable:
+        return value
+
+    if slider_data.changed:
+        slider_data.changed = False
+        return 0
+
+    j = len(slider_data.range)
+    return 0 if j == 0 else (value + 1) % j
+
+
+@ app.callback(Output("date-slider", "children"), Input("slider", "value"))
+def display_value(value):
+    return f"Date : {slider_data.range.get(value)}"
+
+
+@ app.callback(
+    Output("play_pause_button", "children"),
+    Output("stepper", "disabled"),
+    Input("play_pause_button", "n_clicks"),
+    Input("play_pause_button", "children"),
+)
+def play_pause_button(_, children):
+    if children == "Start":
+        return "Stop", False
+
+    return "Start", True
 
 
 paraf = """
@@ -97,184 +154,117 @@ It was popularised in the 1960s with the release of Letraset sheets containing L
 and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 """
 
+paraftype = """
+Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
+and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+"""
+
 app.layout = html.Div(
-    [
-        html.H1("NYPD Calls en fonction de la météo à New York",
-            style={
-                "text-align": "center",
-                "margin-bottom": "80px",
-                "font-size": "50px",
-                'font-family': font_family,
-                'font-color': font_color,
-            }),
-
-        html.Div([
-            html.Div(
-                [
-                    dcc.DatePickerRange(
-                        id="date-picker-range",
-                        min_date_allowed=date(2018, 1, 1),
-                        max_date_allowed=date(2020, 12, 31),
-                        start_date=date(2018, 1, 1),
-                        end_date=date(2020, 12, 31),
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                            "margin-bottom": "5%",
-                        }
-                    ),
-                    dcc.Dropdown(
-                        id="freq",
-                        options=["Day", "Week", "Month"],
-                        value="Month",
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                        }
-                    ),
-                ],
-                style={
-                    "width": "22%",
-                    "margin-right": "20px",
-                    "display": "inline-block",
-                    "vertical-align": "top",
-                    "margin-top": "10%" 
-                },
-            ),
-
-            html.Div(
-                [
-                    dcc.Graph(id="correlation"),
-                ],
-                style={
-                    "width": "75%",
-                    "display": "inline-block",
-                    "vertical-align": "top",
-                },
-            ),
-
-            html.P(paraf, style={"text-align": "justify", "margin-right": "15%", "margin-left": "15%"})
-
-            ],style={
-            'justifyContent':'center',
-            'text-align': 'center',
-            "font-size": "20px",
-            "margin-bottom": "90px"}
+    className="app-base",
+    children=[
+        html.H1("NYPD Calls en fonction de la météo à New York"),
+        html.Div(
+            className="app-Dropdown-div",
+            children=[
+                dcc.Dropdown(
+                    id="frequence",
+                    options=["Jour", "Semaine", "Mois"],
+                    value="Mois",
+                    searchable=False,
+                    clearable=False,
+                    persistence=True,
+                    className="app-Dropdown",
+                ),
+            ]
         ),
-
-        html.Div([
-            html.Div(
-                [
-                    dcc.Graph(id="scatter"),
-                ],
-                style={
-                    "width": "75%",
-                    "display": "inline-block",
-                    "vertical-align": "top",
-                },
-            ),
-
-            html.Div(
-                [
-                    dcc.DatePickerRange(
-                        id="date-picker-range-s",
-                        min_date_allowed=date(2018, 1, 1),
-                        max_date_allowed=date(2020, 12, 31),
-                        start_date=date(2018, 1, 1),
-                        end_date=date(2020, 12, 31),
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                            "margin-bottom": "5%",
-                        }
-                    ),
-                    dcc.Dropdown(
-                        id="freq-s",
-                        options=["Day", "Week", "Month"],
-                        value="Month",
-                        style={
-                            "background-color": background_color,
-                            "font-color": font_color,
-                            "font-family": font_family,
-                        }
-                    ),
-                ],
-                style={
-                    "width": "22%",
-                    "margin-right": "30px",
-                    "display": "inline-block",
-                    "vertical-align": "top",
-                    "margin-top": "10%" 
-                },
-            ),
-
-            html.P(parafscatter, style={"text-align": "justify", "margin-right": "15%", "margin-left": "15%"})
-
-        ], style={
-            'justifyContent':'center',
-            'text-align': 'center',
-            "font-size": "20px",
-            "margin-bottom": "90ppx"
-        }),
-
+        html.Div(
+            className="graph-div",
+            children=[
+                html.H2(children="Nombre d'appels et température moyenne"),
+                html.Div([dcc.Graph(className="graph", id="figure-corr")]),
+                html.P(className="graph-text", children=paraf)
+            ]
+        ),
+        html.Div(
+            className="graph-div",
+            children=[
+                html.H2("Nombre d'appels en fonction de la température moyenne"),
+                html.Div([dcc.Graph(className="graph", id="figure-scatter")]),
+                html.P(className="graph-text", children=parafscatter),
+            ]
+        ),
         html.Div(
             [
+                html.H2(
+                    "Type et lieu des appels par rapport à la température moyenne"
+                ),
                 html.Div(
-                [
-                    dcc.Graph(id="types"),
-
-                    dcc.Slider(
-                        id='wps-crossfilter-year-slider',
-                        step = 1,
-                    ),
-                ],
-                style={
-                    "width": "70%",
-                    "display": "inline-block",
-                    "vertical-align": "bottom",
-                }),
-            ],
-            style={
-                'justifyContent':'center',
-                'text-align': 'center',
-                "font-size": "20px",
-                "margin-bottom": "90px"
-            }
+                    className="graph-div-types",
+                    children=[
+                        html.Div(
+                            className="graph-types",
+                            children=[
+                                html.Div(
+                                    className="graph-types-general",
+                                    children=[dcc.Graph(id="figure-types")],
+                                ),
+                                html.Div(
+                                    className="graph-types-in-out",
+                                    children=[
+                                        dcc.Graph(id="figure-types-in-out")
+                                    ]
+                                ),
+                            ]
+                        ),
+                        dcc.Interval(
+                            id="stepper",
+                            interval=1000,  # in milliseconds
+                            max_intervals=-1,  # start running
+                            n_intervals=0,
+                        ),
+                        html.Div(
+                            id="date-slider",
+                            style={
+                                "margin": "20px",
+                                "text-align": "start",
+                                "font-size": "15px",
+                            },
+                        ),
+                        html.Div(
+                            [
+                                html.Div(
+                                    html.Button(
+                                        children="Start",
+                                        id="play_pause_button",
+                                        n_clicks=0
+                                    ),
+                                    style={
+                                        "display": "inline-block",
+                                        "width": "10%",
+                                        "vertical-align": "top",
+                                    },
+                                ),
+                                html.Div(
+                                    className="graph-types-slider",
+                                    children=dcc.Slider(
+                                        id="slider",
+                                        value=0,
+                                        step=1,
+                                    ),
+                                ),
+                            ],
+                        ),
+                        html.P(className="graph-text", children=paraf)
+                    ]
+                ),
+            ]
         )
-
-        
-        #html.Div(
-        #    [
-        #        dcc.Graph(id="types"),
-        #    ],
-        #   style={
-        #        "width": "70%",
-        #        "display": "inline-block",
-        #        "vertical-align": "bottom",
-        #    },
-        #),
-        #html.Div(
-        #    [
-        #        dcc.Graph(id="types_in_out"),
-        #    ],
-        #    style={
-        #        "width": "40%",
-        #        "display": "inline-block",
-        #        "vertical-align": "bottom",
-        #    },
-        #),
-    ],
-    style={
-        "padding": "4%",
-        "background-color": background_color,
-        "font-color": font_color,
-        "font-family": font_family
-        },
+    ]
 )
-
 
 if __name__ == "__main__":
     app.run_server(debug=True)

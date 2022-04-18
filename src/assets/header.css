@@ -1,0 +1,46 @@
+.app-Dropdown, .app-base {
+    background-color: #FFFFFF;
+}
+
+.app-base, .app-Dropdown,  h1, h2 {
+    color: #000000;
+    font-family: Bookman;
+}
+
+.app-base {
+    width: 80%;
+    max-width: 1300px;
+    height: 100%;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    /* margin-bottom: 80px; */
+    font-size: 50px;
+}
+
+h2 {
+    text-align: start;
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+.app-Dropdown-div {
+    background-color: #FFFFFF;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    margin: auto;
+    height: 80px;
+    z-index: 1000;
+}
+
+.app-Dropdown {
+    border-radius: 15px;
+    width: 60%;
+    margin: auto;
+    top: 20px;
+    z-index: 1000;
+}
