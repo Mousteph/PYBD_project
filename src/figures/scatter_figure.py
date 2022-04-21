@@ -4,7 +4,13 @@ from helpers.utils import (
     remove_outliers,
 )
 
-from helpers.design import background_color, font_color, font_family, color_blue, color_green
+from helpers.design import (
+    background_color,
+    font_color,
+    font_family,
+    color_blue,
+    color_green,
+)
 
 import plotly.express as px
 
@@ -24,9 +30,15 @@ def display_correlation_scatter(freq="M", start=None, end=None):
     wspd = weather_data.prcp.resample(freq).mean()
     wspd = remove_outliers(wspd)
 
-    fig = px.scatter(x=tavg, y=nb_calls, trendline="ols", size=wspd,
-                     color_discrete_sequence=[color_blue], trendline_color_override=color_green,
-                     labels={"x": "température", "y": "nombre d'appels", "size": "précipitation"})
+    fig = px.scatter(
+        x=tavg,
+        y=nb_calls,
+        trendline="ols",
+        size=wspd,
+        color_discrete_sequence=[color_blue],
+        trendline_color_override=color_green,
+        labels={"x": "température", "y": "nombre d'appels", "size": "vitesse du vent"},
+    )
 
     frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
 
