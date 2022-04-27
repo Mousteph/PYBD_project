@@ -10,12 +10,12 @@ class DataManager:
     max_size = {}
 
 
-def in_out_of_calls(freq="M", start=None, end=None, value=None):
+def in_out_of_calls(freq="M", value=None):
     data = DataManager.dataframe.get(freq)
 
     if data is None:
         data = (
-            calls.loc[start:end].groupby(["place", 'date'])
+            calls.groupby(["place", 'date'])
                 .size()
                 .reset_index(0)
                 .groupby(["place"])

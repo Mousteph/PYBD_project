@@ -12,17 +12,10 @@ calls = load_calls_correlation_data()
 weather = load_weather_data()
 
 
-def display_correlation_scatter(freq="M", start=None, end=None):
-    calls_date = calls.loc[start:end]
-    weather_data = weather.loc[start:end]
-
-    nb_calls = calls_date.resample(freq).size()
-    nb_calls = remove_outliers(nb_calls)
-
-    tavg = weather_data.tavg.resample(freq).mean()
-    tavg = remove_outliers(tavg)
-    wspd = weather_data.prcp.resample(freq).mean()
-    wspd = remove_outliers(wspd)
+def display_correlation_scatter(freq="M"):
+    nb_calls = remove_outliers(calls.resample(freq).size())
+    tavg = remove_outliers(weather.tavg.resample(freq).mean())
+    wspd = remove_outliers(weather.prcp.resample(freq).mean())
 
     fig = px.scatter(x=tavg, y=nb_calls, trendline="ols", size=wspd,
                      color_discrete_sequence=[color_blue], trendline_color_override=color_green,

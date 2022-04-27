@@ -37,7 +37,10 @@ class SliderDataManager:
         self.current_freq = freq
         self.changed = True
 
-        marks = {i: "" for i in range(len(years))}
+        marks = {
+            len(years) - 1: years[-1].strftime("%Y-%m-%d"),
+            0: years[0].strftime("%Y-%m-%d")
+        }
 
         def create_marks(mark, start, end, prof=3):
             if not prof:
@@ -49,8 +52,6 @@ class SliderDataManager:
             create_marks(mark, mid, end, prof - 1)
 
         create_marks(marks, 0, len(years))
-        marks[len(years) - 1] = years[-1].strftime("%Y-%m-%d")
-        marks[0] = years[0].strftime("%Y-%m-%d")
 
         return len(years) - 1, marks
 

@@ -20,12 +20,9 @@ calls = load_calls_correlation_data()
 weather = load_weather_data()
 
 
-def display_correlation_plot(freq="M", start=None, end=None):
-    nb_calls = calls.loc[start:end].resample(freq).size()
-    avg = weather.loc[start:end].tavg.resample(freq).mean()
-
-    nb_calls = remove_outliers(nb_calls)
-    avg = remove_outliers(avg)
+def display_correlation_plot(freq="M"):
+    nb_calls = remove_outliers(calls.resample(freq).size())
+    avg = remove_outliers(weather.tavg.resample(freq).mean())
     # corr = np.corrcoef(nb_calls, avg)[0][1]
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])

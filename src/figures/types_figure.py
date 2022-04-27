@@ -14,13 +14,13 @@ class DataManager:
     weather_data = {}
 
 
-def types_of_calls(freq="M", start=None, end=None, value=None):
+def types_of_calls(freq="M", value=None):
     data = DataManager.dataframe.get(freq)
     weather_data = DataManager.weather_data.get(freq)
 
     if data is None:
         data = (
-            calls.loc[start:end].groupby(["desc", 'date'])
+            calls.groupby(["desc", 'date'])
                 .size()
                 .reset_index(0)
                 .groupby(["desc"])
