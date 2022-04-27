@@ -137,13 +137,15 @@ def play_pause_button(_, children):
     return "Start", True
 
 
-paraf = """
-Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
-and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+paraf_corr = """
+Ce graphique représente les courbes de la température moyenne et le nombre d’appels NYPD à New-York
+sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. On remarque une très forte
+corrélation entre les deux courbes. En effet plus la température est élevée, plus le nombre d’appels est
+important et inversement plus la température est basse moins le nombre d’appels est élevé.  
+
+* Remarque :  
+Au début de l’année 2020, on remarque une irrégularité au niveau du nombre d’appels. Cela doit être du
+à la crise de la Covid-19.
 """
 
 parafscatter = """
@@ -187,7 +189,7 @@ app.layout = html.Div(
             children=[
                 html.H2(children="Nombre d'appels et température moyenne"),
                 html.Div([dcc.Graph(className="graph", id="figure-corr")]),
-                html.P(className="graph-text", children=paraf)
+                dcc.Markdown(paraf_corr, className="graph-text")
             ]
         ),
         html.Div(
@@ -259,7 +261,7 @@ app.layout = html.Div(
                                 ),
                             ],
                         ),
-                        html.P(className="graph-text", children=paraf)
+                        html.P(className="graph-text", children=paraftype)
                     ]
                 ),
             ]
@@ -272,7 +274,7 @@ app.layout = html.Div(
                 dcc.Markdown("""
                 * Sources :
                    * [Appels NYPD](https://data.cityofnewyork.us/Public-Safety/NYPD-Calls-for-Service-Historic-/d6zx-ckhd) sur data.cityofnewyork.us
-                   * [Météo à New-York](https://meteostat.net/fr/place/us/new-york-city?t=2018-01-01/2020-12-31) sur meteostat.net  
+                   * [Météo à New-York](https://meteostat.net/fr/place/us/new-york-city?t=2018-01-01/2020-12-31&s=72502) sur meteostat.net  
                 
                 * (c) 2022 Moustapha Diop - Mathieu Rivier
                 """, style={"text-align": "start"}),

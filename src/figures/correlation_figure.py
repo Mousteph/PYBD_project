@@ -51,6 +51,9 @@ def display_correlation_plot(freq="M"):
         font_color=font_color,
     )
 
+    fig.update_traces(hovertemplate='%{y} appels le %{x:%d/%m/%y}', secondary_y=False)
+    fig.update_traces(hovertemplate='%{y}°C le %{x:%d/%m/%y}', secondary_y=True)
+
     # Set x-axis title
     fig.update_xaxes(title_text="Date")
 
