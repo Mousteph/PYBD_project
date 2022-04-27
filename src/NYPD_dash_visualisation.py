@@ -222,7 +222,7 @@ app.layout = html.Div(
                         ),
                         dcc.Interval(
                             id="stepper",
-                            interval=1000,  # in milliseconds
+                            interval=500,  # in milliseconds
                             max_intervals=-1,  # start running
                             n_intervals=0,
                         ),
@@ -262,7 +262,21 @@ app.layout = html.Div(
                     ]
                 ),
             ]
-        )
+        ),
+
+        html.Div(
+            className="graph-div",
+            children=[
+                html.H2(children="A propos"),
+                dcc.Markdown("""
+                * Sources :
+                   * [Appels NYPD](https://data.cityofnewyork.us/Public-Safety/NYPD-Calls-for-Service-Historic-/d6zx-ckhd) sur data.cityofnewyork.us
+                   * [Météo à New-York](https://meteostat.net/fr/place/us/new-york-city?t=2018-01-01/2020-12-31) sur meteostat.net  
+                
+                * (c) 2022 Moustapha Diop - Mathieu Rivier
+                """, style={"text-align": "start"}),
+            ]
+        ),
     ]
 )
 
