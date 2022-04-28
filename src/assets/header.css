@@ -55,3 +55,8 @@ h2 {
     top: 20px;
     z-index: 1000;
 }
+
+footer {
+    text-align: center;
+    font-size: 22px;
+}

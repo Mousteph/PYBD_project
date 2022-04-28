@@ -147,19 +147,19 @@ sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. On 
 corrélation entre les deux courbes. En effet plus la température est élevée, plus le nombre d’appels est
 important et inversement plus la température est basse moins le nombre d’appels est élevé.  
 
-* Remarque :  
+__Remarque :__  
 Au début de l’année 2020, on remarque une irrégularité au niveau du nombre d’appels. Cela doit être du
 à la crise de la Covid-19.
 """
 
 paraf_scatter = """
-À noter: vous pouvez choisir les données en taille du graphique. Deux options vous sont possibles:
+__À noter__: vous pouvez choisir les données en taille du graphique. Deux options vous sont possibles:
   - Vitesse du vent  
   - Précipitations    
 
 Ce graphique représente le nombre d’appels NYPD en fonction de la température à New-York
 sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. La taille des bulles correspond
-au nombre de millimètre de précipitation. Plus une bulle est grosse, plus il a plu.
+au soit: à la vitesse du vent (par défaut) ou au nombre de millimètre de précipitation. Plus une bulle est grosse, plus il y'a eu du vent/plu.
 On remarque que le nombre d’appels est corrélé à la température mais pas corrélé à la précipitation. 
 De plus, il est possible de constaté que, au même titre que la précipitation la vitesse du vent, ne semble
 pas corrélé avec le nombre d'appels.
@@ -295,13 +295,17 @@ app.layout = html.Div(
                 * Sources :
                    * [Appels NYPD](https://data.cityofnewyork.us/Public-Safety/NYPD-Calls-for-Service-Historic-/d6zx-ckhd) sur data.cityofnewyork.us
                    * [Météo à New-York](https://meteostat.net/fr/place/us/new-york-city?t=2018-01-01/2020-12-31&s=72502) sur meteostat.net  
-                
-                * (c) 2022 Moustapha Diop - Mathieu Rivier
                 """,
                     style={"text-align": "start"},
                 ),
             ],
         ),
+        html.Footer(
+            children=[
+                dcc.Markdown("""(c) 2022 Moustapha Diop - Mathieu Rivier""")
+            ]
+
+        )
     ],
 )
 
