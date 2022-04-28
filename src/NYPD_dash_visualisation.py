@@ -148,13 +148,12 @@ Au début de l’année 2020, on remarque une irrégularité au niveau du nombre
 à la crise de la Covid-19.
 """
 
-parafscatter = """
-Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
-and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+paraf_scatter = """
+Ce graphique représente le nombre d’appels NYPD en fonction de la température à New-York
+sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. La taille des bulles correspond
+au nombre de mm de précipitation. Plus une bulle est grosse, plus il a plu.
+On remarque que le nombre d’appels est corrélé à la température mais pas corrélé à la précipitation.
+En effet les différentes tailles des bulles sont assez uniformément réparties sur l’ensemble du graphique.
 """
 
 paraftype = """
@@ -197,7 +196,7 @@ app.layout = html.Div(
             children=[
                 html.H2("Nombre d'appels en fonction de la température moyenne"),
                 html.Div([dcc.Graph(className="graph", id="figure-scatter")]),
-                html.P(className="graph-text", children=parafscatter),
+                html.P(className="graph-text", children=paraf_scatter),
             ]
         ),
         html.Div(

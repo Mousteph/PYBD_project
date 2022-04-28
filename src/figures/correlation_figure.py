@@ -40,8 +40,6 @@ def display_correlation_plot(freq="M"):
 
     # Add figure title
     fig.update_layout(
-        # title_text=f"Corrélation entre le nombre d'appels et la temperature moyenne {round(corr * 100, 2)}%",
-        # title_x=0.5,
         margin=dict(l=10, r=10, b=10, t=50, pad=2),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
         plot_bgcolor=background_color,

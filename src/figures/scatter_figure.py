@@ -19,7 +19,7 @@ def display_correlation_scatter(freq="M"):
 
     fig = px.scatter(x=tavg, y=nb_calls, trendline="ols", size=wspd,
                      color_discrete_sequence=[color_blue], trendline_color_override=color_green,
-                     labels={"x": "température", "y": "nombre d'appels", "size": "précipitation"})
+                     labels={"x": "température (°C)", "y": "nombre d'appels", "size": "précipitation (mm)"})
 
     frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
 
@@ -27,8 +27,6 @@ def display_correlation_scatter(freq="M"):
     fig.update_yaxes(title_text=f"Nombre d'appels par {frequency}")
 
     fig.update_layout(
-        # title_text=f"Nombre d'appels en fonction de la température moyenne",
-        # title_x=0.5,
         margin=dict(l=10, r=10, b=10, t=50, pad=4),
         plot_bgcolor=background_color,
         paper_bgcolor=background_color,
