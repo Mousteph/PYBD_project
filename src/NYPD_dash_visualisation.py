@@ -32,14 +32,13 @@ class SliderDataManager:
 
     def get_marks(self, freq):
         years = self.years[freq]
-        self.range = {i: years[i].strftime("%Y-%m-%d")
-                      for i in range(len(years))}
+        self.range = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
         self.current_freq = freq
         self.changed = True
 
         marks = {
             len(years) - 1: years[-1].strftime("%Y-%m-%d"),
-            0: years[0].strftime("%Y-%m-%d")
+            0: years[0].strftime("%Y-%m-%d"),
         }
 
         def create_marks(mark, start, end, prof=3):
@@ -60,6 +59,7 @@ app = Dash(__name__)
 slider_data = SliderDataManager()
 
 frequency = {"Mois": "M", "Semaine": "W", "Jour": "D"}
+size_values = {"Précipitations": 0, "Vittesse du vent": 1}
 
 
 @app.callback(
@@ -70,15 +70,18 @@ def figure_correlation(freq):
     return display_correlation_plot(frequency.get(freq, "M"))
 
 
-@ app.callback(
+@app.callback(
     Output("figure-scatter", "figure"),
     Input("frequence", "value"),
+    Input("size_scatter", "value"),
 )
-def scatter_figure(freq):
-    return display_correlation_scatter(frequency.get(freq, "M"))
+def scatter_figure(freq, size_value):
+    return display_correlation_scatter(
+        frequency.get(freq, "M"), size_values.get(size_value, 1)
+    )
 
 
-@ app.callback(
+@app.callback(
     Output("figure-types", "figure"),
     Output("figure-types-in-out", "figure"),
     Input("frequence", "value"),
@@ -91,7 +94,7 @@ def figure_types(freq, value):
     return (types_of_calls(freq, value=value), in_out_of_calls(freq, value=value))
 
 
-@ app.callback(
+@app.callback(
     Output("slider", "min"),
     Output("slider", "max"),
     Output("slider", "marks"),
@@ -101,7 +104,7 @@ def slider_years(freq):
     return 0, *slider_data.get_marks(frequency.get(freq, "M"))
 
 
-@ app.callback(
+@app.callback(
     Output("slider", "value"),
     Input("slider", "value"),
     Input("stepper", "disabled"),
@@ -119,12 +122,12 @@ def update_slider(value, disable, _):
     return 0 if j == 0 else (value + 1) % j
 
 
-@ app.callback(Output("date-slider", "children"), Input("slider", "value"))
+@app.callback(Output("date-slider", "children"), Input("slider", "value"))
 def display_value(value):
     return f"Date : {slider_data.range.get(value)}"
 
 
-@ app.callback(
+@app.callback(
     Output("play_pause_button", "children"),
     Output("stepper", "disabled"),
     Input("play_pause_button", "n_clicks"),
@@ -180,29 +183,41 @@ app.layout = html.Div(
                     persistence=True,
                     className="app-Dropdown",
                 ),
-            ]
+            ],
         ),
         html.Div(
             className="graph-div",
             children=[
                 html.H2(children="Nombre d'appels et température moyenne"),
                 html.Div([dcc.Graph(className="graph", id="figure-corr")]),
-                dcc.Markdown(paraf_corr, className="graph-text")
-            ]
+                dcc.Markdown(paraf_corr, className="graph-text"),
+            ],
         ),
         html.Div(
             className="graph-div",
             children=[
                 html.H2("Nombre d'appels en fonction de la température moyenne"),
                 html.Div([dcc.Graph(className="graph", id="figure-scatter")]),
+                html.Div(
+                    className="app-Dropdown-div",
+                    children=[
+                        dcc.Dropdown(
+                            id="size_scatter",
+                            options=["Précipitations", "Vitesse du vent"],
+                            value="Précipitations",
+                            searchable=False,
+                            clearable=False,
+                            persistence=True,
+                            className="app-Dropdown",
+                        ),
+                    ],
+                ),
                 html.P(className="graph-text", children=paraf_scatter),
-            ]
+            ],
         ),
         html.Div(
             [
-                html.H2(
-                    "Type et lieu des appels par rapport à la température moyenne"
-                ),
+                html.H2("Type et lieu des appels par rapport à la température moyenne"),
                 html.Div(
                     className="graph-div-types",
                     children=[
@@ -215,11 +230,9 @@ app.layout = html.Div(
                                 ),
                                 html.Div(
                                     className="graph-types-in-out",
-                                    children=[
-                                        dcc.Graph(id="figure-types-in-out")
-                                    ]
+                                    children=[dcc.Graph(id="figure-types-in-out")],
                                 ),
-                            ]
+                            ],
                         ),
                         dcc.Interval(
                             id="stepper",
@@ -241,7 +254,7 @@ app.layout = html.Div(
                                     html.Button(
                                         children="Start",
                                         id="play_pause_button",
-                                        n_clicks=0
+                                        n_clicks=0,
                                     ),
                                     style={
                                         "display": "inline-block",
@@ -259,26 +272,28 @@ app.layout = html.Div(
                                 ),
                             ],
                         ),
-                        html.P(className="graph-text", children=paraf_type)
-                    ]
+                        html.P(className="graph-text", children=paraf_type),
+                    ],
                 ),
             ]
         ),
-
         html.Div(
             className="graph-div",
             children=[
                 html.H2(children="A propos"),
-                dcc.Markdown("""
+                dcc.Markdown(
+                    """
                 * Sources :
                    * [Appels NYPD](https://data.cityofnewyork.us/Public-Safety/NYPD-Calls-for-Service-Historic-/d6zx-ckhd) sur data.cityofnewyork.us
                    * [Météo à New-York](https://meteostat.net/fr/place/us/new-york-city?t=2018-01-01/2020-12-31&s=72502) sur meteostat.net  
                 
                 * (c) 2022 Moustapha Diop - Mathieu Rivier
-                """, style={"text-align": "start"}),
-            ]
+                """,
+                    style={"text-align": "start"},
+                ),
+            ],
         ),
-    ]
+    ],
 )
 
 if __name__ == "__main__":
