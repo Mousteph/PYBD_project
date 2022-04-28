@@ -48,7 +48,7 @@ def types_of_calls(freq="M", value=None):
                              line_color=color_green,
                              line_width=0.8,
                              name="Température",
-                             hovertemplate="%{y} appels le %{x:%d/%m/%y}"), secondary_y=True)
+                             hovertemplate="%{y}°C le %{x:%d/%m/%y}"), secondary_y=True)
 
     fig.add_vline(x=value, line_color=color_green, line_width=0.8, secondary_y=True)
 
