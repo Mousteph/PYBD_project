@@ -26,15 +26,32 @@ h2 {
     margin-bottom: 30px;
 }
 
+.app-intro {
+    width: 80%;
+    margin: auto;
+    font-size: 20px;
+}
+
 .app-Dropdown-div {
     background-color: #FFFFFF;
     position: -webkit-sticky;
     position: sticky;
     top: 0;
     width: 100%;
+    font-size: 22px;
     margin: auto;
     height: 80px;
+    text-align: center;
     z-index: 1000;
+}
+
+.app-Dropdown-scatter {
+    background-color: #FFFFFF;
+    position: relative;
+    width: 70%;
+    margin: auto;
+    height: 70px;
+    z-index: 100;
 }
 
 .app-Dropdown {
@@ -43,4 +60,9 @@ h2 {
     margin: auto;
     top: 20px;
     z-index: 1000;
+}
+
+footer {
+    text-align: center;
+    font-size: 22px;
 }

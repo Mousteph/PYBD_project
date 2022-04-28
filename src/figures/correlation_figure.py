@@ -57,7 +57,8 @@ def display_correlation_plot(freq="M"):
     frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
 
     # Set y-axes titles
-    fig.update_yaxes(title_text=f"Nombre d'appels par {frequency}", secondary_y=False)
+    fig.update_yaxes(
+        title_text=f"Nombre d'appels par {frequency}", secondary_y=False)
     fig.update_yaxes(
         title_text=f"Température moyenne par {frequency}", secondary_y=True
     )

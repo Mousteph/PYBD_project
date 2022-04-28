@@ -4,7 +4,13 @@ from helpers.utils import (
     remove_outliers,
 )
 
-from helpers.design import background_color, font_color, font_family, color_blue, color_green
+from helpers.design import (
+    background_color,
+    font_color,
+    font_family,
+    color_blue,
+    color_green,
+)
 
 import plotly.express as px
 
@@ -12,15 +18,28 @@ calls = load_calls_correlation_data()
 weather = load_weather_data()
 
 
-def display_correlation_scatter(freq="M"):
+def display_correlation_scatter(freq="M", size_value=0):
     nb_calls = remove_outliers(calls.resample(freq).size())
     tavg = remove_outliers(weather.tavg.resample(freq).mean())
-    wspd = remove_outliers(weather.prcp.resample(freq).mean())
+    prcp = remove_outliers(weather.prcp.resample(freq).mean())
+    wspd = remove_outliers(weather.wspd.resample(freq).mean())
 
-    fig = px.scatter(x=tavg, y=nb_calls, trendline="ols", size=wspd,
-                     color_discrete_sequence=[color_blue], trendline_color_override=color_green)
+    size_values = [prcp, wspd]
+    hover_text = ["mm de précipitation", "km/h de vent"]
 
-    fig.update_traces(hovertemplate="Température: %{x}°C<br>%{y} appels<br>%{marker.size:.2f}mm de précipitation")
+    fig = px.scatter(
+        x=tavg,
+        y=nb_calls,
+        trendline="ols",
+        size=size_values[size_value],
+        color_discrete_sequence=[color_blue],
+        trendline_color_override=color_green,
+    )
+
+    fig.update_traces(
+        hovertemplate="Température: %{x}°C<br>%{y} appels<br>%{marker.size:.2f}"
+        + hover_text[size_value]
+    )
 
     frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
 
