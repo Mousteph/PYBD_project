@@ -32,7 +32,8 @@ class SliderDataManager:
 
     def get_marks(self, freq):
         years = self.years[freq]
-        self.range = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
+        self.range = {i: years[i].strftime("%Y-%m-%d")
+                      for i in range(len(years))}
         self.current_freq = freq
         self.changed = True
 
@@ -152,10 +153,16 @@ Au début de l’année 2020, on remarque une irrégularité au niveau du nombre
 """
 
 paraf_scatter = """
+À noter: vous pouvez choisir les données en taille du graphique. Deux options vous sont possibles:
+  - Vitesse du vent  
+  - Précipitations    
+
 Ce graphique représente le nombre d’appels NYPD en fonction de la température à New-York
 sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. La taille des bulles correspond
 au nombre de millimètre de précipitation. Plus une bulle est grosse, plus il a plu.
-On remarque que le nombre d’appels est corrélé à la température mais pas corrélé à la précipitation.
+On remarque que le nombre d’appels est corrélé à la température mais pas corrélé à la précipitation. 
+De plus, il est possible de constaté que, au même titre que la précipitation la vitesse du vent, ne semble
+pas corrélé avec le nombre d'appels.
 En effet les différentes tailles des bulles sont assez uniformément réparties sur l’ensemble du graphique.
 """
 
@@ -199,7 +206,7 @@ app.layout = html.Div(
                 html.H2("Nombre d'appels en fonction de la température moyenne"),
                 html.Div([dcc.Graph(className="graph", id="figure-scatter")]),
                 html.Div(
-                    className="app-Dropdown-div",
+                    className="app-Dropdown-scatter",
                     children=[
                         dcc.Dropdown(
                             id="size_scatter",
@@ -212,12 +219,13 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                html.P(className="graph-text", children=paraf_scatter),
+                dcc.Markdown(paraf_scatter, className="graph-text")
             ],
         ),
         html.Div(
             [
-                html.H2("Type et lieu des appels par rapport à la température moyenne"),
+                html.H2(
+                    "Type et lieu des appels par rapport à la température moyenne"),
                 html.Div(
                     className="graph-div-types",
                     children=[
@@ -230,7 +238,8 @@ app.layout = html.Div(
                                 ),
                                 html.Div(
                                     className="graph-types-in-out",
-                                    children=[dcc.Graph(id="figure-types-in-out")],
+                                    children=[
+                                        dcc.Graph(id="figure-types-in-out")],
                                 ),
                             ],
                         ),

@@ -25,6 +25,7 @@ def display_correlation_scatter(freq="M", size_value=0):
     wspd = remove_outliers(weather.wspd.resample(freq).mean())
 
     size_values = [prcp, wspd]
+    hover_text = ["mm de précipitation", "km/h de vent"]
 
     fig = px.scatter(
         x=tavg,
@@ -36,7 +37,8 @@ def display_correlation_scatter(freq="M", size_value=0):
     )
 
     fig.update_traces(
-        hovertemplate="Température: %{x}°C<br>%{y} appels<br>%{marker.size:.2f}mm de précipitation"
+        hovertemplate="Température: %{x}°C<br>%{y} appels<br>%{marker.size:.2f}"
+        + hover_text[size_value]
     )
 
     frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
