@@ -37,7 +37,10 @@ class SliderDataManager:
         self.current_freq = freq
         self.changed = True
 
-        marks = {i: "" for i in range(len(years))}
+        marks = {
+            len(years) - 1: years[-1].strftime("%Y-%m-%d"),
+            0: years[0].strftime("%Y-%m-%d")
+        }
 
         def create_marks(mark, start, end, prof=3):
             if not prof:
@@ -49,8 +52,6 @@ class SliderDataManager:
             create_marks(mark, mid, end, prof - 1)
 
         create_marks(marks, 0, len(years))
-        marks[len(years) - 1] = years[-1].strftime("%Y-%m-%d")
-        marks[0] = years[0].strftime("%Y-%m-%d")
 
         return len(years) - 1, marks
 
@@ -136,31 +137,31 @@ def play_pause_button(_, children):
     return "Start", True
 
 
-paraf = """
-Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
-and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+paraf_corr = """
+Ce graphique représente les courbes de la température moyenne et le nombre d’appels NYPD à New-York
+sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. On remarque une très forte
+corrélation entre les deux courbes. En effet plus la température est élevée, plus le nombre d’appels est
+important et inversement plus la température est basse moins le nombre d’appels est élevé.  
+
+* Remarque :  
+Au début de l’année 2020, on remarque une irrégularité au niveau du nombre d’appels. Cela doit être du
+à la crise de la Covid-19.
 """
 
-parafscatter = """
-Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
-and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+paraf_scatter = """
+Ce graphique représente le nombre d’appels NYPD en fonction de la température à New-York
+sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. La taille des bulles correspond
+au nombre de millimètre de précipitation. Plus une bulle est grosse, plus il a plu.
+On remarque que le nombre d’appels est corrélé à la température mais pas corrélé à la précipitation.
+En effet les différentes tailles des bulles sont assez uniformément réparties sur l’ensemble du graphique.
 """
 
-paraftype = """
-Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
-and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+paraf_type = """
+Ces graphiques représentent le type est le lieu des appels NYPD par rapport à la température à New-York
+sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. On remarque que le type d’appel
+change en fonction de la température mais surtout qu’il y a plus d’appels dans un lieu abrité (intérieur) que 
+dans un lieu ouvert (extérieur) quand les températures sont basses et plus d’appels à l’extérieur qu’à l’intérieur
+quand les températures sont élevées.
 """
 
 app.layout = html.Div(
@@ -186,7 +187,7 @@ app.layout = html.Div(
             children=[
                 html.H2(children="Nombre d'appels et température moyenne"),
                 html.Div([dcc.Graph(className="graph", id="figure-corr")]),
-                html.P(className="graph-text", children=paraf)
+                dcc.Markdown(paraf_corr, className="graph-text")
             ]
         ),
         html.Div(
@@ -194,7 +195,7 @@ app.layout = html.Div(
             children=[
                 html.H2("Nombre d'appels en fonction de la température moyenne"),
                 html.Div([dcc.Graph(className="graph", id="figure-scatter")]),
-                html.P(className="graph-text", children=parafscatter),
+                html.P(className="graph-text", children=paraf_scatter),
             ]
         ),
         html.Div(
@@ -222,7 +223,7 @@ app.layout = html.Div(
                         ),
                         dcc.Interval(
                             id="stepper",
-                            interval=1000,  # in milliseconds
+                            interval=500,  # in milliseconds
                             max_intervals=-1,  # start running
                             n_intervals=0,
                         ),
@@ -258,11 +259,25 @@ app.layout = html.Div(
                                 ),
                             ],
                         ),
-                        html.P(className="graph-text", children=paraf)
+                        html.P(className="graph-text", children=paraf_type)
                     ]
                 ),
             ]
-        )
+        ),
+
+        html.Div(
+            className="graph-div",
+            children=[
+                html.H2(children="A propos"),
+                dcc.Markdown("""
+                * Sources :
+                   * [Appels NYPD](https://data.cityofnewyork.us/Public-Safety/NYPD-Calls-for-Service-Historic-/d6zx-ckhd) sur data.cityofnewyork.us
+                   * [Météo à New-York](https://meteostat.net/fr/place/us/new-york-city?t=2018-01-01/2020-12-31&s=72502) sur meteostat.net  
+                
+                * (c) 2022 Moustapha Diop - Mathieu Rivier
+                """, style={"text-align": "start"}),
+            ]
+        ),
     ]
 )
 
