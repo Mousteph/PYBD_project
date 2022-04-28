@@ -32,8 +32,7 @@ class SliderDataManager:
 
     def get_marks(self, freq):
         years = self.years[freq]
-        self.range = {i: years[i].strftime("%Y-%m-%d")
-                      for i in range(len(years))}
+        self.range = {i: years[i].strftime("%Y-%m-%d") for i in range(len(years))}
         self.current_freq = freq
         self.changed = True
 
@@ -141,6 +140,22 @@ def play_pause_button(_, children):
     return "Start", True
 
 
+paraf_intro = """
+Bienvenue,  
+Vous pourrez trouver sur cette page des comparaisons et analyses de la corrélation entre la météo
+et le nombre d'appels passés au centre d'appel de NYPD à New-York. Chacun des graphs suivants,
+permet de mettre en relations différents aspects météorologiques avec le nombre d'appels.  
+
+__Remarque:__  
+Grace au bouton ci dessous ___qui est toujours visible sur la page___, vous pourrez changer la
+fréquence de tout les graphs de la page.  
+
+Trois options s'offrent à vous:
+ - par Mois
+ - par Semaine
+ - par Jour
+"""
+
 paraf_corr = """
 Ce graphique représente les courbes de la température moyenne et le nombre d’appels NYPD à New-York
 sur une période de 3 ans entre le 1er janvier 2018 et le 31 décembre 2020. On remarque une très forte
@@ -178,6 +193,12 @@ app.layout = html.Div(
     className="app-base",
     children=[
         html.H1("NYPD Calls en fonction de la météo à New York"),
+        html.Div(
+            className="app-intro",
+            children=[
+                dcc.Markdown(paraf_intro, className="paraf_intro"),
+            ],
+        ),
         html.Div(
             className="app-Dropdown-div",
             children=[
@@ -219,13 +240,12 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                dcc.Markdown(paraf_scatter, className="graph-text")
+                dcc.Markdown(paraf_scatter, className="graph-text"),
             ],
         ),
         html.Div(
             [
-                html.H2(
-                    "Type et lieu des appels par rapport à la température moyenne"),
+                html.H2("Type et lieu des appels par rapport à la température moyenne"),
                 html.Div(
                     className="graph-div-types",
                     children=[
@@ -238,8 +258,7 @@ app.layout = html.Div(
                                 ),
                                 html.Div(
                                     className="graph-types-in-out",
-                                    children=[
-                                        dcc.Graph(id="figure-types-in-out")],
+                                    children=[dcc.Graph(id="figure-types-in-out")],
                                 ),
                             ],
                         ),
@@ -301,11 +320,8 @@ app.layout = html.Div(
             ],
         ),
         html.Footer(
-            children=[
-                dcc.Markdown("""(c) 2022 Moustapha Diop - Mathieu Rivier""")
-            ]
-
-        )
+            children=[dcc.Markdown("""(c) 2022 Moustapha Diop - Mathieu Rivier""")]
+        ),
     ],
 )
 
