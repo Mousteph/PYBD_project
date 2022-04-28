@@ -143,7 +143,7 @@ def play_pause_button(_, children):
 paraf_intro = """
 Bienvenue,  
 Vous pourrez trouver sur cette page des comparaisons et analyses de la corrélation entre la météo
-et le nombre d'appels passés au centre d'appel de NYPD à New-York. Chacun des graphs suivants,
+et le nombre d'appels passés au centre d'appel de NYPD à New-York. Chacun des graphes suivants,
 permet de mettre en relations différents aspects météorologiques avec le nombre d'appels.  
 
 __Remarque:__  
@@ -192,7 +192,7 @@ quand les températures sont élevées.
 app.layout = html.Div(
     className="app-base",
     children=[
-        html.H1("NYPD Calls en fonction de la météo à New York"),
+        html.H1("Appels NYPD en fonction de la météo à New-York"),
         html.Div(
             className="app-intro",
             children=[
