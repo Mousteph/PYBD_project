@@ -16,13 +16,13 @@ def in_out_of_calls(freq="M", value=None):
     if data is None:
         data = (
             calls.groupby(["place", 'date'])
-                .size()
-                .reset_index(0)
-                .groupby(["place"])
-                .resample(freq)
-                .sum()
-                .reset_index(0)
-                .rename(columns={0: "number"})
+            .size()
+            .reset_index(0)
+            .groupby(["place"])
+            .resample(freq)
+            .sum()
+            .reset_index(0)
+            .rename(columns={0: "number"})
         )
 
         DataManager.max_size[freq] = data.number.max()
