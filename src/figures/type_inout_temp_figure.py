@@ -28,13 +28,14 @@ def in_out_of_calls(freq="M", value=None):
         DataManager.max_size[freq] = data.number.max()
         DataManager.dataframe[freq] = data
 
-    fig = px.bar(data.loc[value], x="place", y="number", labels={"place": "lieu", "number": "nombre d'appels"},
-                 color='place')
+    fig = px.bar(data.loc[value], x="place", y="number", color='place')
+
+    fig.update_traces(hovertemplate="Lieu: %{x}<br>%{y:.2f} appels")
 
     frequency = "mois" if freq == "M" else "semaine" if freq == "W" else "jour"
 
     fig.update_yaxes(title_text=f"Nombre d'appels par {frequency}")
-    fig.update_xaxes(title_text="Lieu")
+    fig.update_xaxes(title_text="Lieux")
 
     fig.update_layout(
         showlegend=False,

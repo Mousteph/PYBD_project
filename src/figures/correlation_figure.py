@@ -29,12 +29,14 @@ def display_correlation_plot(freq="M"):
 
     # Add traces
     fig.add_trace(
-        go.Scatter(x=nb_calls.index, y=nb_calls, line_color=color_blue, name="Appels"),
+        go.Scatter(x=nb_calls.index, y=nb_calls, line_color=color_blue, name="Appels",
+                   hovertemplate="%{y} appels le %{x:%d/%m/%y}"),
         secondary_y=False,
     )
 
     fig.add_trace(
-        go.Scatter(x=nb_calls.index, y=avg, line_color=color_green, name="Température"),
+        go.Scatter(x=nb_calls.index, y=avg, line_color=color_green, name="Température",
+                   hovertemplate="%{y}°C le %{x:%d/%m/%y}"),
         secondary_y=True,
     )
 
@@ -48,9 +50,6 @@ def display_correlation_plot(freq="M"):
         font_family=font_family,
         font_color=font_color,
     )
-
-    fig.update_traces(hovertemplate='%{y} appels le %{x:%d/%m/%y}', secondary_y=False)
-    fig.update_traces(hovertemplate='%{y}°C le %{x:%d/%m/%y}', secondary_y=True)
 
     # Set x-axis title
     fig.update_xaxes(title_text="Date")

@@ -28,10 +28,10 @@ def inside_outside(line: str) -> str:
     outside = ["OUTSIDE", "TRANSIT"]
 
     if any(ext in line for ext in inside):
-        return "INSIDE"
+        return "Intérieur"
     elif any(ext in line for ext in outside):
-        return "OUTSIDE"
-    return "UNKNOWNED"
+        return "Extérieur"
+    return "Inconnu"
 
 
 def generate_data_NYPD_calls(file_format: str, save_path: str) -> None:

@@ -18,7 +18,7 @@ def display_correlation_scatter(freq="M"):
     wspd = remove_outliers(weather.prcp.resample(freq).mean())
 
     fig = px.scatter(x=tavg, y=nb_calls, trendline="ols", size=wspd,
-                     color_discrete_sequence=[color_blue], trendline_color_override=color_green,)
+                     color_discrete_sequence=[color_blue], trendline_color_override=color_green)
 
     fig.update_traces(hovertemplate="Température: %{x}°C<br>%{y} appels<br>%{marker.size:.2f}mm de précipitation")
 
